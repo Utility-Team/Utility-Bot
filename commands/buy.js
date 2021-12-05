@@ -1736,7 +1736,7 @@ module.exports = {
                     if(!isNaN(number) && Math.sign(number) === 1){
                       if(number % 1=== 0){
                            if(userbal2>= cost){
-                             if(userData2.cryptocoin + paseInt(number) <= 10000 ){
+                             if(userData2.cryptocoin + parseInt(number) <= 10000 ){
                                 let d2 = new Date();
                                 let n2 = d2.getTime();
                                 const newbuy = await userModel.findOneAndUpdate({userID:message.author.id},{
