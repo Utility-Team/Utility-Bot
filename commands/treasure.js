@@ -11,7 +11,7 @@ module.exports = {
                     if(!isNaN(number) && Math.sign(number) === 1){
                         if(number % 1=== 0){
                          if(userData.wallet >= number){
-                          if(number <= 25000){
+                          if(number <= 50000){
                                 let lasttreasure;
                                 if(userData.lasttreasure){  
                                     lasttreasure = userData.lasttreasure;
@@ -245,7 +245,7 @@ module.exports = {
                                         }
                                
                             }else{
-                                message.channel.send(`${message.author}, You can't play a treasure game of more than 25000 coins`);
+                                message.channel.send(`${message.author}, You can't play a treasure game of more than 50000 coins`);
                             }
                         }else{
                             message.channel.send(`${message.author}, You don't have that much money in your wallet!`);

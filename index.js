@@ -44,6 +44,7 @@ let shareValueDown = async ()=>{
   let tesla = Math.round(tesla2);
   let cryptocoin2 =Number((1 * botdata.cryptovalue/100).toFixed(10));
   let cryptocoin = Math.round(cryptocoin2);
+  //let chance = Math.floor(Math.random() * 2);
   const response = await botModel.findOneAndUpdate({botid:1},{
     $inc:{
       alphabetvalue:-50,
@@ -66,7 +67,9 @@ client.on('ready',async on_ready=>{
     let botData = await botModel.findOneAndUpdate({botid:1},{
      uptime:n
     });
-    //(function(){ shareValueDown(); }, 600000);
+   // (function(){ 
+     // console.log('share value going down');
+    //  shareValueDown(); }, 3000);
 
 
   
@@ -159,53 +162,53 @@ client.on('guildBanAdd', async (guild, user) => {
 		console.log(`${user.tag} got hit with the swift hammer of justice in the guild ${guild.name}, audit log fetch was inconclusive.`);
 	}
 });
-// client.on('guildMemberRemove', async member => {
-//  // const guild = Client.guilds.cache.find(member.guild.id);
-//   if(member.guild.me.hasPermission("ADMINISTRATOR")) {
-//     console.log("I have the Permission Administrator");
+client.on('guildMemberRemove', async member => {
+  const guild = Client.guilds.cache.find(member.guild.id);
+  if (guild.members.get(client.user.id).permissions.has("ADMINISTRATOR")){
+    console.log("I have the Permission Administrator");
   
-//   //if (member.guild.me.hasPermission("ADMINISTRATOR")){
-//      const fetchedLogs = await member.guild.fetchAuditLogs({
-//          limit: 1,
-//          type: 'MEMBER_KICK',
-//      });
-//      	const fetchedLogs2 = await member.guild.fetchAuditLogs({
-// 	 	limit: 1,
-// 	 	type: 'MEMBER_BAN_ADD',
-// 	 });
-//         const leaveEmbed = new Discord.MessageEmbed();
-//         leaveEmbed.setColor('#5cf000')
-//         leaveEmbed.setTitle(`**  ${member.user.tag} ** has left the server. Now there are ${member.guild.memberCount} members left in the server`)
-//         leaveEmbed.setImage("https://i.ibb.co/6Y7YSJZ/baby-yoda-bye-bye-icegif.gif")
-//         leaveEmbed.setThumbnail(member.user.displayAvatarURL())
+  if (member.guild.me.hasPermission("ADMINISTRATOR")){
+     const fetchedLogs = await member.guild.fetchAuditLogs({
+         limit: 1,
+         type: 'MEMBER_KICK',
+     });
+     	const fetchedLogs2 = await member.guild.fetchAuditLogs({
+	 	limit: 1,
+	 	type: 'MEMBER_BAN_ADD',
+	 });
+        const leaveEmbed = new Discord.MessageEmbed();
+        leaveEmbed.setColor('#5cf000')
+        leaveEmbed.setTitle(`**  ${member.user.tag} ** has left the server. Now there are ${member.guild.memberCount} members left in the server`)
+        leaveEmbed.setImage("https://i.ibb.co/6Y7YSJZ/baby-yoda-bye-bye-icegif.gif")
+        leaveEmbed.setThumbnail(member.user.displayAvatarURL())
         
-//         const profile = await profileModel.findOne({guildID:member.guild.id});
-//         const logsID = profile.logschannel
-//         if(profile){
-//             const channelID = profile.cleave
-//             console.log(channelID)
-//             const leave_new = member.guild.channels.cache.find(i=>i.id ===channelID);
-//             if(leave_new){
-//                await leave_new.send({embeds:[leaveEmbed]}); 
-//             }
-//         }
-//         const logs_channel = member.guild.channels.cache.find(i=>i.id ===logsID);
-//         console.log(fetchedLogs);
-//         console.log(fetchedLogs2);
-//      if(!fetchedLogs2){ 
-//         if(logs_channel){
-//             const embed = new Discord.MessageEmbed();
-//             embed.setTitle(`Member Left`);
-//             embed.setThumbnail(`${member.user.displayAvatarURL()}`);
-//             embed.setColor(`#C41731`)
-//             embed.addFields({name:`${member.user.username}`,value:`ID: ${member.user.id}`});
-//             embed.setTimestamp();
-//             logs_channel.send({embeds:[embed]});
-//         }
-//     }
-//   }
-//  // }
-// });
+        const profile = await profileModel.findOne({guildID:member.guild.id});
+        const logsID = profile.logschannel
+        if(profile){
+            const channelID = profile.cleave
+            console.log(channelID)
+            const leave_new = member.guild.channels.cache.find(i=>i.id ===channelID);
+            if(leave_new){
+               await leave_new.send({embeds:[leaveEmbed]}); 
+            }
+        }
+        const logs_channel = member.guild.channels.cache.find(i=>i.id ===logsID);
+        console.log(fetchedLogs);
+        console.log(fetchedLogs2);
+     if(!fetchedLogs2){ 
+        if(logs_channel){
+            const embed = new Discord.MessageEmbed();
+            embed.setTitle(`Member Left`);
+            embed.setThumbnail(`${member.user.displayAvatarURL()}`);
+            embed.setColor(`#C41731`)
+            embed.addFields({name:`${member.user.username}`,value:`ID: ${member.user.id}`});
+            embed.setTimestamp();
+            logs_channel.send({embeds:[embed]});
+        }
+    }
+  }
+  }
+});
 
 client.on('messageDelete', async(message, channel)=>{
     console.log('Test, a message was deleted.');
@@ -751,6 +754,9 @@ if(command === 'treasure'){
 }
 if(command === 'rank'){
   client.commands.get('rank').execute(message, args,client);
+}
+if(command === 'leaderboard'){
+  client.commands.get('leaderboard').execute(message, args,client);
 }
 
   

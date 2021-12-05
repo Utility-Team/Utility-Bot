@@ -1736,7 +1736,7 @@ module.exports = {
                     if(!isNaN(number) && Math.sign(number) === 1){
                       if(number % 1=== 0){
                            if(userbal2>= cost){
-                             if(userData2.cryptocoin + number <= 10000 ){
+                             if(userData2.cryptocoin + paseInt(number) <= 10000 ){
                                 let d2 = new Date();
                                 let n2 = d2.getTime();
                                 const newbuy = await userModel.findOneAndUpdate({userID:message.author.id},{
@@ -1786,7 +1786,7 @@ module.exports = {
                   }else{
                       console.log(userData2.cryptocoin);
                     if(userbal2>= cryptovalue){
-                      if(userData2.cryptocoin !== 5000){
+                      if(userData2.cryptocoin < 10000){
                         let d2 = new Date();
                         let n2 = d2.getTime();
                         const newbuy = await userModel.findOneAndUpdate({userID:message.author.id},{
@@ -1817,7 +1817,7 @@ module.exports = {
                         embed.setTimestamp();
                         message.channel.send({embeds:[embed]});
                       }else{
-                        message.channel.send(`${message.author}, You can't have more than 5000 cryptocoins!`);
+                        message.channel.send(`${message.author}, You can't have more than 10000 cryptocoins!`);
                       }
                     }else{
                       message.channel.send(`${message.author}, You don't have enough money to buy!`);
