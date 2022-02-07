@@ -127,7 +127,7 @@ module.exports = {
                           );
                   message.channel.send(`${message.author}, Congratulations You are appointed as a Teacher. Your salary is 12,000 per hour
                   `);
-                          
+
               }else if(jobname === 'police officer'){
                 if(userData.totalwork >= 10){
                     const response = await userModel.findOneAndUpdate({
@@ -712,7 +712,7 @@ module.exports = {
                                 if(chance === 0){
                                   console.log(gameState);
                                   let attackembed = new Discord.MessageEmbed();
-                                  attackembed.setTitle(`${villain} has attacked you! Quickly React`);
+                                  attackembed.setTitle(`${villain} has attacked you! Quickly Defend`);
                                   attackembed.addFields({name:`${jobname}'s Health:`,value:`<:healthbar:920163166531510333> ${userhealth}%`},
                                   {name:`${villain}'s Health:`,value:`<:healthbar:920163166531510333> ${villainhealth}%`});
                                   attackembed.setDescription('**select one from given moves**');

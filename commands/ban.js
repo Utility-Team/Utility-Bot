@@ -21,7 +21,7 @@ module.exports = {
                     if(!reason) reason = 'no reason provided';
                     const memberTarget = message.guild.members.cache.get(target.id);
                 
-                    if(memberTarget.permissions.has('ADMINISTRATOR')){
+                    if(target.permissions.has('ADMINISTRATOR')){
 
                         const embed = new Discord.MessageEmbed();
                         embed.setTitle(`❌ Can't ban that member is an admin/mod`)
