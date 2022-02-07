@@ -245,16 +245,16 @@ module.exports = {
                                      embed.setTimestamp();
                                      embed.setColor(`#30CC71`);
                                      message.channel.send({embeds:[embed]});
-                                     if(userData.totalgamble>100){
-                                        check_Rewards('Successfully playing 100 gambles','500 xp','<:supergamblerbadge:925733231532322837>',1,'Gamble',500,'xp');
+                                     if(userData.totalgamble>=100){
+                                        check_Rewards('Successfully playing 100 gambles','500 xp','<:playing100gambles:925732172277620746>',1,'Gamble',500,'xp');
                                      }
-                                     if(userData.wongamble>100){
+                                     if(userData.wongamble>=100){
                                        check_Rewards('Winning 100 gambles','<:uc:922720730272137256> 15k','<:supergamblerbadge:925733231532322837>',2,'Gamble',15000,'money');
                                      }
-                                     if(userData.totalgamble>1000){
+                                     if(userData.totalgamble>=1000){
                                       check_Rewards('Successfully playing 100 gambles','<:uc:922720730272137256> 50k','<:playing1000gambles:925737559689150475>>',4,'Gamble',50000,'money');
                                      }
-                                     if(userData.wongamble>1000){
+                                     if(userData.wongamble>=1000){
                                       check_Rewards('Winning 1000 gambles','<:uc:922720730272137256> 500k','<:winning1000gamblesbadge:938451521241239612>',4,'Gamble',500000,'money');
                                      }
                                    }else if(bot_score > user_score){

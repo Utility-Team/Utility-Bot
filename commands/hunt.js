@@ -131,13 +131,16 @@ module.exports = {
         }
 
         async function check(userData){
-          
-          if(userData.huntingrifle>=1){
-            hunt();
-            return;
+          if(userData.huntingrifle){
+            if(userData.huntingrifle>=1){
+              hunt();
+              return;
+            }else{
+              message.channel.send(`${message.author}, You don't have hunting rifle for hunting. You can buy it using buy command`);
+
+            }
           }else{
             message.channel.send(`${message.author}, You don't have hunting rifle for hunting. You can buy it using buy command`);
-
           }
         }
         let userinfo = await userModel.findOne({userID:message.author.id});

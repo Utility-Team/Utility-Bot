@@ -133,9 +133,14 @@ module.exports = {
               }
             }
             async function check(userData){
-              if(userData.fishingrod>=1){
-                fish();
-                return;
+              if(userData.fishingrod){
+                if(userData.fishingrod>=1){
+                  fish();
+                  return;
+                }else{
+                  message.channel.send(`${message.author}, You don't have fishing rod for fishing. You can buy it using buy command`);
+
+                }
               }else{
                 message.channel.send(`${message.author}, You don't have fishing rod for fishing. You can buy it using buy command`);
 

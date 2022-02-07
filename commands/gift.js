@@ -473,12 +473,14 @@ module.exports={
                                     message.channel.send({embeds:[embed2]});
                                     const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                         $inc:{
-                                            lock:-number
+                                            lock:-number,
+                                            totalitemsdonated:number
                                         }
                                      });
                                      const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                          $inc:{
-                                             lock:number
+                                             lock:number,
+                                             totalitemsreceived:number
                                          }
                                      });
                                     
@@ -505,12 +507,14 @@ module.exports={
                             message.channel.send({embeds:[embed2]});
                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                 $inc:{
-                                    lock:-1
+                                    lock:-1,
+                                    totalitemsdonated:1
                                 }
                              });
                              const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                  $inc:{
-                                     lock:1
+                                     lock:1,
+                                     totalitemsreceived:1
                                  }
                              });
                             
@@ -627,12 +631,14 @@ module.exports={
                                                 message.channel.send({embeds:[embed2]});
                                                 const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                                     $inc:{
-                                                        huntingrifle:-number
+                                                        huntingrifle:-number,
+                                                        totalitemsdonated:number
                                                     }
                                                  });
                                                  const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                                      $inc:{
-                                                         huntingrifle:number
+                                                         huntingrifle:number,
+                                                         totalitemsreceived:number
                                                      }
                                                  });
                                                 
@@ -660,12 +666,14 @@ module.exports={
                                             message.channel.send({embeds:[embed2]});
                                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                                 $inc:{
-                                                    huntingrifle:-number
+                                                    huntingrifle:-1,
+                                                    totalitemsdonated:1
                                                 }
                                              });
                                              const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                                  $inc:{
-                                                     huntingrifle:number
+                                                     huntingrifle:1,
+                                                     totalitemsreceived:1
                                                  }
                                              });
                                         }else{
@@ -692,12 +700,14 @@ module.exports={
                                                 message.channel.send({embeds:[embed2]});
                                                 const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                                    $inc:{
-                                                       fishingrod:-number
+                                                       fishingrod:-number,
+                                                       totalitemsdonated:number,
                                                    }
                                                 });
                                                 const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                                     $inc:{
-                                                        fishingrod:number
+                                                        fishingrod:number,
+                                                        totalitemsreceived:number
                                                     }
                                                 });
                                             }else{
@@ -724,12 +734,14 @@ module.exports={
                                             message.channel.send({embeds:[embed2]});
                                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                                 $inc:{
-                                                    fishingrod:-1
+                                                    fishingrod:-1,
+                                                    totalitemsdonated:1
                                                 }
                                              });
                                              const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                                  $inc:{
-                                                     fishingrod:1
+                                                     fishingrod:1,
+                                                     totalitemsreceived:1
                                                  }
                                              });
                                         }else{
@@ -852,12 +864,14 @@ module.exports={
                             message.channel.send({embeds:[embed2]});
                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                 $inc:{
-                                    boat:-number
+                                    boat:-number,
+                                    totalitemsdonated:1
                                 }
                              });
                              const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                  $inc:{
-                                     boat:number
+                                     boat:number,
+                                     totalitemsreceived:1
                                  }
                              });
                         }else{
@@ -884,12 +898,12 @@ module.exports={
                         message.channel.send({embeds:[embed2]});
                         const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                             $inc:{
-                                boat:-number
+                                boat:-1
                             }
                          });
                          const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                              $inc:{
-                                 boat:number
+                                 boat:1
                              }
                          });
                     }else{
@@ -913,12 +927,14 @@ module.exports={
                             message.channel.send({embeds:[embed2]});
                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                 $inc:{
-                                    creditpoints:-number
+                                    creditpoints:-number,
+                                    totalitemsdonated:1
                                 }
                              });
                              const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                  $inc:{
-                                     creditpoints:number
+                                     creditpoints:number,
+                                     totalitemsreceived:1
                                  }
                              });
                         }else{
@@ -945,12 +961,14 @@ module.exports={
                         message.channel.send({embeds:[embed2]});
                         const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                             $inc:{
-                                creditpoints:-number
+                                creditpoints:-1,
+                                totalitemsdonated:1
                             }
                          });
                          const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                              $inc:{
-                                 creditpoints:number
+                                 creditpoints:1,
+                                 totalitemsreceived:1
                              }
                          });
                     }else{
