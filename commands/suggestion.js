@@ -23,7 +23,7 @@ module.exports = {
                         const embed = new Discord.MessageEmbed();
                         embed.setTitle(`Thanks for your suggestion!`);
                         message.channel.send({embeds:[embed]});
-                        let server = client.guilds.cache.get('856486919419854859');
+                        let server = client.guilds.cache.get('819180667673378816');
                         const suggestions = server.channels.cache.find(i=>i.name ==='suggestions');
                         const embed2 = new Discord.MessageEmbed();
                         embed2.setAuthor(`Suggestion from ${message.author.username}#${message.author.discriminator}`,message.author.displayAvatarURL());
