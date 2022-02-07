@@ -1803,7 +1803,7 @@ module.exports = {
                 }else if(argsone_name === 'santa' && argstwo_name === 'cap'){
                   let totalcap = args[2];
                   let number = args[2];
-                  let santacapvalue = botData.capvalue;
+                  let santacapvalue = botData.santavalue;
                   let userData2 = await userModel.findOne({userID:message.author.id});
                   let userbal2 = userData2.wallet;
                   let cost = santacapvalue * totalcap;
