@@ -17,7 +17,6 @@ module.exports={
     {name:`${prefix}help bot`,value:'Shows commands related to bot'},
     {name:`${prefix}help currency`,value:`Shows currency system commands`},
     {name:`${prefix}help settings`,value:'Shows settings commands'},
-    {name:`${prefix}report userid reason`,value:`let's you report a particular user`},
    
     );
     embed.setTimestamp();
@@ -136,7 +135,9 @@ module.exports={
       {name:`${prefix}suggestion your suggestion`,value:'you can suggest things about bot'},
       {name:`${prefix}inviteme`,value:'dms the invite link of the bot'},
       {name:`${prefix}donate`,value:'support us in the keep the bot running!'},
-      {name:`${prefix}updates`,value:`shows messages & notifications from developers`}
+      {name:`${prefix}updates`,value:`shows messages & notifications from developers`},
+      {name:`${prefix}report userid reason`,value:`let's you report a particular user`},
+   
       );
       embed.setTimestamp();
       embed.setColor(`#404EED`);

@@ -10,11 +10,15 @@ module.exports={
     const target = message.mentions.users.first() ||  message.guild.members.cache.get(args[0]);
     if(userData){
           let avatar;
-          if(userData.avatar !== '' && userData.premium === 'enable'){
-              avatar = userData.avatar;
+          if(userData.avatar){
+            if(userData.avatar !== '' && userData.premium === 'enable'){
+                avatar = userData.avatar;
+            }else{
+                avatar = message.author.displayAvatarURL();
+            }
           }else{
               avatar = message.author.displayAvatarURL();
-          }
+          } 
           let lastinv;
           if(userData.lastinv){
             lastinv= userData.lastinv;
@@ -43,7 +47,6 @@ module.exports={
                   let mainembed = new Discord.MessageEmbed();
                   mainembed.setTitle(`${message.author.username}'s inventory`);
                   mainembed.setThumbnail(`${avatar}`);
-                  mainembed.addFields({name:`Total Items:`,value:`${userData.inventory.length}`});
                   mainembed.setFooter(`Requested by ${message.author.username}`,avatar);
                   mainembed.setTimestamp();
                   let jewelleryembed = new Discord.MessageEmbed();
@@ -250,15 +253,18 @@ module.exports={
                   let targetData = await userModel.findOne({userID:target.id});
                       if(targetData){
                           let targetavatar;
-                          if(targetData.avatar !== '' && targetData.premium === 'enable'){
-                              targetavatar = targetData.avatar;
+                          if(targetData.avatar){
+                            if(targetData.avatar !== '' && targetData.premium === 'enable'){
+                                targetavatar = targetData.avatar;
+                            }else{
+                                targetavatar = memberTarget.user.displayAvatarURL();
+                            }
                           }else{
                               targetavatar = memberTarget.user.displayAvatarURL();
                           }
                           let mainembed = new Discord.MessageEmbed();
                           mainembed.setTitle(`${memberTarget.user.username}'s inventory`);
                           mainembed.setThumbnail(`${targetavatar}`);
-                          mainembed.addFields({name:`Total Items:`,value:`${targetData.inventory.length}`});
                           mainembed.setFooter(`Requested by ${message.author.username}`,avatar);
                           mainembed.setTimestamp();
                           let jewelleryembed = new Discord.MessageEmbed();
