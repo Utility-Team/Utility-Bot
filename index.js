@@ -12,14 +12,7 @@ const fetch = require("node-fetch");
 const { userInfo } = require('os');
 require('dotenv').config()
 let botModel = require('./models/botSchema');
-//const keepAlive = require('./server');
-
-
-
-
-//const keepAlive = require('./server')
-
-
+const muteModel = require('./models/muteSchema');
 client.commands = new Discord.Collection();
  
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -29,31 +22,24 @@ for(const file of commandFiles){
 }
  
 let shareValueDown = async ()=>{
-  let botdata = await botModel.findOne({botid:1});
-  let alphabet2 = Number((1 * botdata.alphabetvalue/100).toFixed(10));
-  let alphabet = Math.round(alphabet2);
-  let utility2 =Number((1 * botdata.utilityvalue/100).toFixed(10));
-  let utility = Math.round(utility2);
-  let facebook2 =Number((1 * botdata.facebookvalue/100).toFixed(10));
-  let facebook = Math.round(facebook2);
-  let microsoft2 = Number((1 * botdata.microsoftvalue/100).toFixed(10));
-  let microsoft = Math.round(microsoft2);
-  let apple2 = Number((1 * botdata.applevalue/100).toFixed(10));
-  let apple = Math.round(apple2);
-  let tesla2 = Number((1 * botdata.teslavalue/100).toFixed(10));
-  let tesla = Math.round(tesla2);
-  let cryptocoin2 =Number((1 * botdata.cryptovalue/100).toFixed(10));
-  let cryptocoin = Math.round(cryptocoin2);
-  //let chance = Math.floor(Math.random() * 2);
+  
+  let chance = Math.floor(Math.random()*2);
+  let chance2;
+  if(chance ===0){
+    chance2 = 50;
+  }else{
+    chance2= -50;
+  }
+  console.log(chance);
   const response = await botModel.findOneAndUpdate({botid:1},{
     $inc:{
-      alphabetvalue:-50,
-      utilityvalue:-50,
-      facebookvalue:-50,
-      microsoftvalue:-50,
-      applevalue:-50,
-      teslavalue:-50,
-      cryptocoinvalue:-50,
+      alphabetvalue:chance2,
+      utilityvalue:chance2,
+      facebookvalue:chance2,
+      microsoftvalue:chance2,
+      applevalue:chance2,
+      teslavalue:chance2,
+      cryptocoinvalue:chance2,
     }
   }); 
 }
@@ -67,9 +53,8 @@ client.on('ready',async on_ready=>{
     let botData = await botModel.findOneAndUpdate({botid:1},{
      uptime:n
     });
-   // (function(){ 
-     // console.log('share value going down');
-    //  shareValueDown(); }, 3000);
+   
+   
 
 
   
@@ -84,12 +69,17 @@ mongoose.connect(process.env.MONGODB_SRV,{
 }).catch((err)=>{
     console.log(err)
 });
-client.on('guildCreate', guild => {
-    const channel = guild.channels.cache.find(channel => channel.type === 'text' && channel.permissionsFor(guild.me).has('SEND_MESSAGES'))
+client.on('guildCreate', async guild => {
+ 
+    const channel = guild.channels.cache.find(channel => channel.type === 'text' );
+   
     var embed = new Discord.MessageEmbed();
     embed.setTitle('Thanks for inviting Utility to the server');
     embed.addFields({name:'For knowing what all i can do type',value:';help'});
-   // channel.send({embeds:[embed]});
+    if(channel){
+      console.log(channel.permissionsFor(guild.me).has('SEND_MESSAGES'));
+      await channel.send({embeds:[embed]});
+    }
 })
 client.on('guildMemberAdd',async member => {
 
@@ -123,6 +113,33 @@ client.on('guildMemberAdd',async member => {
     embed.setTimestamp();
     logs_channel.send({embeds:[embed]});
     }
+    let d2 = new Date();
+    let n2 = d2.getTime();
+    let memberData = await muteModel.findOne({userID:member.id,guildID:member.guild.id});
+    if(memberData){
+      console.log('here 1 comes');
+        console.log(n2 - memberData.lastmuted);
+        console.log('here 2 comes');
+        if(memberData.forevermute === 'true'){
+          let mutedRole = member.guild.roles.cache.find(role => role.name === 'Muted');
+          if(mutedRole){
+            console.log('here 3 comes')
+            member.roles.add(mutedRole);
+          }
+          
+        }else{
+          if(n2 - memberData.lastmuted < memberData.mutedfor){
+            let mutedRole = member.guild.roles.cache.find(role => role.name === 'Muted');
+            if(mutedRole){
+              console.log('here 3 comes')
+              member.roles.add(mutedRole);
+            }
+          }
+        }
+      
+    }
+
+    
 });
 client.on('guildBanAdd', async (guild, user) => {
 	const fetchedLogs = await guild.fetchAuditLogs({
@@ -163,11 +180,11 @@ client.on('guildBanAdd', async (guild, user) => {
 	}
 });
 client.on('guildMemberRemove', async member => {
-  const guild = Client.guilds.cache.find(member.guild.id);
-  if (guild.members.get(client.user.id).permissions.has("ADMINISTRATOR")){
+  const guild = member.guild;
+  if (guild.members.cache.find(user=> user.id === client.user.id).permissions.has("ADMINISTRATOR")){
     console.log("I have the Permission Administrator");
   
-  if (member.guild.me.hasPermission("ADMINISTRATOR")){
+  if (member.guild.me.permissions.has("ADMINISTRATOR")){
      const fetchedLogs = await member.guild.fetchAuditLogs({
          limit: 1,
          type: 'MEMBER_KICK',
@@ -193,9 +210,10 @@ client.on('guildMemberRemove', async member => {
             }
         }
         const logs_channel = member.guild.channels.cache.find(i=>i.id ===logsID);
-        console.log(fetchedLogs);
-        console.log(fetchedLogs2);
-     if(!fetchedLogs2){ 
+        // console.log(fetchedLogs);
+        // console.log(fetchedLogs2);
+        console.log(logs_channel);
+    // if(!fetchedLogs2){ 
         if(logs_channel){
             const embed = new Discord.MessageEmbed();
             embed.setTitle(`Member Left`);
@@ -203,9 +221,9 @@ client.on('guildMemberRemove', async member => {
             embed.setColor(`#C41731`)
             embed.addFields({name:`${member.user.username}`,value:`ID: ${member.user.id}`});
             embed.setTimestamp();
-            logs_channel.send({embeds:[embed]});
+            await logs_channel.send({embeds:[embed]});
         }
-    }
+    //}
   }
   }
 });
@@ -226,6 +244,7 @@ client.on('messageDelete', async(message, channel)=>{
                 embed.addFields({name:`Channel:`,value:`<#${message.channel.id}>`},{name:`Deleted Message`,value:`${message.content}`});
                 embed.setTimestamp();
                 embed.setColor('#ED4245');
+                embed.setFooter(`User id: ${message.author.id}`);
                 logs.send({embeds:[embed]});
           }
         }
@@ -417,8 +436,10 @@ client.on('messageUpdate', async (oldMessage, newMessage) => {
   }
 
 let update = async (message)=>{
+  console.log('step 1');
   let findUser = await userModel.findOne({userID:message.author.id});
   if(findUser){
+    console.log('step 2');
     const response = await userModel.findOneAndUpdate({
       userID:message.author.id
     },
@@ -426,26 +447,279 @@ let update = async (message)=>{
       username:message.author.username
     }
     );
+    console.log(findUser.premium);
+    if(findUser.premium === 'enable'){
+      console.log('step 3');
+      console.log('here is 1');
+      let d = new Date();
+      let n = d.getTime();
+      if(n - findUser.lastpremium  >= 2592000000){
+        const response2 = await userModel.findOneAndUpdate({userID:message.author.id},{
+          premium:'disable',
+          premiumtype:0,
+          avatar:'',
+          background:'',
+          collected:'false',
+          lootbox:0
+        }); 
+        if(findUser.badges){
+          let badgesData = findUser.badges;
+          console.log(findUser)
+          for(var x =0;x<=findUser.badges.length;x++){
+            if(findUser.badges[x]){
+              if(findUser.badges[x].name === 'Premium'){
+                  
+                  badgesData.splice(x,1);
+                  const response3 = await userModel.findOneAndUpdate({userID:message.author.id},{
+                    badges:badgesData
+                  });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+let randomStuff = async (message)=>{
+  if(message.author.bot !== true && !message.content.startsWith(`${prefix}`)){
+    const randomNumber = Math.floor(Math.random()*20);
+    console.log(randomNumber)
+    if(randomNumber === 15){
+      const embed = new Discord.MessageEmbed();
+      embed.setTitle(`Someone lost their wallet! Wanna pick it up?`);
+      embed.setImage('https://i.ibb.co/F8H3W6C/20n.gif');
+      const row = new Discord.MessageActionRow()
+      .addComponents(
+          new Discord.MessageButton()
+              .setCustomId('claim')
+              .setLabel('Claim It!')
+              .setStyle('SUCCESS'),    
+      );
+    const m = await message.channel.send({embeds:[embed],components:[row]});
+      const ifilter = i => message.guild.members.cache.get(i.user.id);
+
+      const collector = m.createMessageComponentCollector({ filter:ifilter, time: 15000 });
+
+      collector.on('collect', async i => {
+          console.log('hello there' + i.guildId);
+          if (i.customId === 'claim') {
+            const randomNumber2 = Math.floor(Math.random()* 2000 + 10);
+            await i.update({components:[]});
+            const embed2 = new Discord.MessageEmbed();
+            embed2.setTitle(`Successfully Claimed!`); 
+            embed2.setDescription(`${i.user.username}, you got ${randomNumber2}`);
+            embed2.setColor(`#30CC71`);
+            message.channel.send({embeds:[embed2]});
+
+            const userData = await userModel.findOne({userID:message.author.id});
+            if(userData){
+              const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                $inc:{
+                  networth:randomNumber2,
+                  wallet:randomNumber2
+                }
+              });
+            }else{
+              let profile = await userModel.create({
+                //user's id
+                 userID:message.author.id,
+                //username
+                username:message.author.username,
+                 //money in wallet
+                 wallet:1000,
+                 //money in bank
+                 bank:0,
+                 //total money
+                 networth:1000,
+                 //job name
+                 job:'',
+                 //total commands runned
+                 commands:0,
+                 //last daily time
+                 dailytime:0,
+                 //last monthly time
+                 monthlytime:0,
+                 //last daily worked
+                 dailywork:0,
+                 //total gambles played
+                 totalgamble:0,
+                 //total gambles won
+                 wongamble:0,
+                 //total gambles lost
+                 lostgamble:0,
+                 //current salary
+                 salary:0,
+                 //total hours worked
+                 totalwork:0,
+                 //Utility CryptoCoins
+                 cryptocoin:0,
+                 //last gamble played
+                 lastgamble:0,
+                 //number of gambles tie
+                 tiegamble:0,
+                 //xp
+                 xp:0,
+                 //level
+                 level:0,
+                 //alphabet shares
+                 alphabet:0,
+                 //Utility shares
+                 utility:0,
+                 //facebook shares
+                 facebook:0,
+                 //microsoft shares
+                 microsoft:0,
+                 //apple shares
+                 apple:0,
+                 //tesla shares
+                 tesla:0,
+                 //mode
+                 mode:'active',
+                 //lock active or not
+                 lockactive:'disable',
+                 //last raid done by the user
+                 lastraid:0,
+                 //last resign
+                 lastresign:0,
+                 //last beg
+                 lastbeg:0,
+                 //number of locks in use
+                 nolock:0,
+                 //partner id
+                 partner:0,
+                 //partner name
+                 partnername:'',
+                 //last time the user got raided
+                 gotraided:0,
+                 //last profile
+                 lastprofile:0,
+                 //last inventory
+                 lastinv:0,
+                 //bio
+                 bio:'',
+                 //hobby
+                 hobby:'',
+                 //last family inv
+                 lastfamilyinv:0,
+                 //last find
+                 lastfind:0,
+                 //last fish
+                 lastfish:0,
+                 //last hunt
+                 lasthunt:0,
+                 //total rps
+                 totalrps:0,
+                 //won rps
+                 wonrps:0,
+                 //lost rps
+                 lostrps:0,
+                 //tie rps
+                 tierps:0,
+                 //last rps
+                 lastrps:0,
+                 //premium
+                 premium:'disable',
+                 //last premium
+                 lastpremium:0,
+                 //last passive
+                 lastpassive:0,
+                 //last shop
+                 lastshop:0,
+                 //last lottery
+                 lastlottery:0,
+                 //last dig
+                 lastdig:0,
+                 //last treasure
+                 lasttreasure:0,
+                 //last buy
+                 lastbuy:0,
+                 //last sell
+                 lastsell:0,
+                 //last use
+                 lastuse:0,
+                 avatar:'',
+                 background:'',
+                 premiumtype:0,
+                 huntingrifle:0,
+                 fishingrod:0,
+                 boat:0,
+                 lock:0,
+                 creditpoints:0,
+              });
+              profile.save();
+            }
+
+          }
+      });
+
+      collector.on('end', collected => console.log(`Collected ${collected.size} items`));
+    }
   }
 }
 
 client.on('messageCreate', async (message)=>{
+ 
 
   update(message);
+  // setTimeout(()=>{
+  //   randomStuff(message);},
+  // 10000
+  // );
+  
  console.log(message.guild.id);
- //shareUpdate();
  if(message.mentions.has(client.user)&& message.content.endsWith('prefix')){
-     const profileData2 = await profileModel.findOne({"guildID":message.guild.id});
-     const newprefix = profileData2.prefix;
-     if(profileData2){
-     console.log('working ');
-     const embed = new Discord.MessageEmbed();
-     embed.setTitle(`${message.author.username} The current prefix is ${newprefix}`);
-     embed.setDescription(`To change prefix use ${newprefix}prefix prefix`);
-     message.channel.send({embeds:[embed]});
-     }
-     
- }  
+  console.log(message.content);
+  const profileData2 = await profileModel.findOne({"guildID":message.guild.id});
+  const newprefix = profileData2.prefix;  
+  if(profileData2){
+  console.log('working ');
+  const embed = new Discord.MessageEmbed();
+  embed.setTitle(`${message.author.username} The current prefix is ${newprefix}`);
+  embed.setDescription(`To change prefix use ${newprefix}prefix prefix`);
+  message.channel.send({embeds:[embed]});
+  }
+}
+// if(message.mentions.has(client.user)&& !message.content.endsWith('prefix') && message.content.includes('prefix')){
+//     if(message.member.permissions.has('ADMINISTRATOR')){
+       
+//        let msg =    message.content.replace(`<@!${client.user.id}> prefix`,'');
+      
+         
+//       //  msg.replace(/^\s+|\s+$/gm,'');
+      
+//         console.log('replace with' + msg);
+//         const profileData2 = await profileModel.findOne({"guildID":message.guild.id});
+//         const newprefix = profileData2.prefix;  
+//         if(profileData2){
+//           const response = await profileModel.findOneAndUpdate({"guildID":message.guild.id},
+//           { 
+//             prefix:msg
+//           }
+//           );
+//           const embed = new Discord.MessageEmbed();
+//           embed.setTitle(`${message.author.username} the prefix of the bot has been set to ${msg}`)
+//           message.channel.send({embeds:[embed]});
+//         }else{
+//           const embed = new Discord.MessageEmbed();
+//           embed.setTitle(`${message.author.username}, You don't have the perms to change the prefix`);
+//           message.channel.send({embeds:[embed]});
+//         }
+//  }
+// }  
+if(message.content.startsWith('shit')){
+  await message.channel.messages.fetch({limit:1}).then(messages=>{
+    message.channel.bulkDelete(messages);
+}).catch(err=>{
+   console.log(err)
+   message.channel.send(err)
+});
+ message.channel.send('such words are not allowed!');
+}
+//<@!856486451113361458> prefix
+ //shareUpdate();
+ 
  if(message.author){
      let userData = await userModel.findOne({partner:message.author.id});
      if(userData){
@@ -480,330 +754,17 @@ client.on('messageCreate', async (message)=>{
     if(!message.content.startsWith(prefix) || message.author.bot) return;
  
     const args = message.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
-    console.log(prefix)
-    if (message.content === prefix + 'ping') {
-        const embed = new Discord.MessageEmbed();
-        console.log('2 error')
-        message.channel.send('Loading data').then (async (msg) =>{
-          msg.delete()
-          embed.setTitle(`🏓Latency:${client.ws.ping}ms`);
-          message.channel.send({embeds:[embed]});
-        })
-        //console.log(prefix)
+    const cmdName = args.shift().toLowerCase();
+    const command = client.commands.get(cmdName) || client.commands.find(cmd=>cmd.aliases&& cmd.aliases.includes(cmdName));
+    console.log(prefix);
+    try{
+      command.execute(message,args,client);
+      shareValueDown();
+      randomStuff(message);
+    }catch(err){
+      console.log(err);
     }
-    if(message.content.startsWith(prefix + 'voteme')){
-        console.log('3 error')
-      var embed = new Discord.MessageEmbed();
-      embed.setTitle(`${message.author.username} Here is the link to vote me`)
-      embed.addFields({name:'You can vote after every 12 hours  in the Top.gg through the link-',value:'https://top.gg/bot/824626723878207499/vote'})
-      embed.setFooter('Thanks for choosing Utility')
-      console.log(message.author.username + '' + 'voting')
-      message.channel.send({embeds:[embed]});
-    }
-      if(command === 'avatar'){
-        console.log('1 error')
-        client.commands.get('avatar').execute(message, args,client);
-    } 
-    if(command === 'ban'){
-        console.log('4 error')
-        client.commands.get('ban').execute(message, args,client);
-    } 
-    if(command === 'unban'){
-        console.log('4 error')
-        client.commands.get('unban').execute(message, args,client);
-    } 
-    if(command === 'kick'){
-        console.log('5 error')
-        client.commands.get('kick').execute(message, args,client);
-    }
-    if(command === 'help'){
-        console.log('6 error')
-        client.commands.get('help').execute(message, args);
-    } 
-    if(command === 'slowmode'){
-        console.log('7 error')
-        client.commands.get('slowmode').execute(message, args);
-    } 
-    if(command === 'warn'){
-        console.log('8 error')
-        client.commands.get('warn').execute(message, args);
-    } 
-    if(command === 'mute'){
-        console.log('9 error')
-        client.commands.get('mute').execute(message, args);
-    } 
-    if(command === 'nuke'){
-        client.commands.get('nuke').execute(message, args);
-    } 
-    if(command === 'unmute'){
-        client.commands.get('unmute').execute(message, args);
-    } 
-    if(command === 'clear'){
-        client.commands.get('clear').execute(message, args);
-    }
-    if(command === 'meme'){
-        client.commands.get('meme').execute(message, args);
-    }
-     if(command === 'inviteme'){
-        client.commands.get('inviteme').execute(message, args);
-    }  
-     if(command === 'topic'){
-        client.commands.get('topic').execute(message, args);
-    }  
-      if(command === 'version'){
-        client.commands.get('version').execute(message, args);
-    }  
-     if(command === 'aboutbot'){
-        client.commands.get('aboutbot').execute(message, args);
-    } 
-    if(command === 'support'){
-        client.commands.get('support').execute(message, args);
-    }  
-    if(command === 'tweet'){
-        client.commands.get('tweet').execute(message, args);
-    }  
-    if(command === 'prefix'){
-        client.commands.get('prefix').execute(message, args);
-    }  
-    if(command === 'cwelcome'){
-        client.commands.get('cwelcome').execute(message, args);
-    }  
-    if(command === 'cleave'){
-        client.commands.get('cleave').execute(message, args);
-    } 
-    if(command === 'clogs'){
-        client.commands.get('clogs').execute(message, args);
-    }
-    if(command === 'suggestion'){
-        client.commands.get('suggestion').execute(message, args,client);
-    }
-    if(command === 'bal'){
-        client.commands.get('bal').execute(message, args,client);
-    }
-    if(command === 'join'){
-        client.commands.get('join').execute(message, args,client);
-    }
-    if(command === 'value'){
-        client.commands.get('value').execute(message, args,client);
-    }
-    if(command === 'convert'){
-        client.commands.get('convert').execute(message, args,client);
-    }
-    if(command === 'with'){
-        client.commands.get('with').execute(message, args,client);
-    }
-    if(command === 'dep'){
-        client.commands.get('dep').execute(message, args,client);
-    }
-    if(command === 'jobslist'){
-        client.commands.get('jobslist').execute(message, args,client);
-    }
-     if(command === 'work'){
-        client.commands.get('work').execute(message, args,client);
-    }
-    if(command === 'profile'){
-        client.commands.get('profile').execute(message, args,client);
-    }
-    if(command === 'daily'){
-        client.commands.get('daily').execute(message, args,client);
-    }
-    if(command === 'monthly'){
-        client.commands.get('monthly').execute(message, args,client);
-    }
-    if(command === 'gamble'){
-        client.commands.get('gamble').execute(message, args,client);
-    }
-    if(command === 'shop'){
-        client.commands.get('shop').execute(message, args,client);
-    }
-    if(command === 'buy'){
-        client.commands.get('buy').execute(message, args,client);
-    }
-    if(command === 'sharemarket'){
-        shareUpdate();
-        client.commands.get('sharemarket').execute(message, args,client);
-    }
-    if(command === 'resign'){
-        client.commands.get('resign').execute(message, args,client);
-    }
-    if(command === 'shares'){
-        client.commands.get('shares').execute(message, args,client);
-    }
-    if(command === 'give'){
-        client.commands.get('give').execute(message, args,client);
-    }
-    if(command === 'sell'){
-        client.commands.get('sell').execute(message, args,client);
-    }
-    if(command === 'inventory'){
-        client.commands.get('inventory').execute(message, args,client);
-    }
-    if(command === 'mode'){
-        client.commands.get('mode').execute(message, args,client);
-    }
-    if(command === 'raid'){
-        client.commands.get('raid').execute(message, args,client);
-    }
-    if(command === 'use'){
-        client.commands.get('use').execute(message, args,client);
-    }
-    if(command === 'inv'){
-        client.commands.get('inv').execute(message, args,client);
-    }
-    if(command === 'propose'){
-        client.commands.get('propose').execute(message, args,client);
-    }
-    if(command === 'beg'){
-        client.commands.get('beg').execute(message, args,client);
-    }
-    if(command === 'divorce'){
-        client.commands.get('divorce').execute(message, args,client);
-    }
-    if(command === 'partner'){
-        client.commands.get('partner').execute(message, args,client);
-    }
-    if(command === 'gay'){
-        client.commands.get('gay').execute(message, args,client);
-    }   
-    if(command === 'trade'){
-        client.commands.get('trade').execute(message, args,client);
-    }  
-    if(command === 'botinfo'){
-        client.commands.get('botinfo').execute(message, args,client);
-    }
-    if(command === 'fish'){
-        client.commands.get('fish').execute(message, args,client);
-    }     
-    if(command === 'truth'){
-        client.commands.get('truth').execute(message, args,client);
-    }     
-    if(command === 'dare'){
-        client.commands.get('dare').execute(message, args,client);
-    } 
-    if(command === 'hunt'){
-        client.commands.get('hunt').execute(message, args,client);
-    }    
-    if(command === 'kiss'){
-        client.commands.get('kiss').execute(message, args,client);
-    }    
-    if(command === 'hug'){
-        client.commands.get('hug').execute(message, args,client);
-    }  
-    if(command === 'rps'){
-        client.commands.get('rps').execute(message, args,client);
-    }  
-    if(command === 'userinfo'){
-        client.commands.get('userinfo').execute(message, args,client);
-    } 
-    if(command === 'set-bio'){
-        client.commands.get('set-bio').execute(message, args,client);
-    } 
-    if(command === 'set-hobby'){
-        client.commands.get('set-hobby').execute(message, args,client);
-    } 
-    if(command === 'familyinv'){
-        client.commands.get('familyinv').execute(message, args,client);
-    } 
-    if(command === 'find'){
-        client.commands.get('find').execute(message, args,client);
-    } 
-    if(command === 'settings-raid'){
-        client.commands.get('settings-raid').execute(message, args,client);
-    }
-    if(command === 'settings-welcome'){
-        client.commands.get('settings-welcome').execute(message, args,client);
-    }
-    if(command === 'settings-leave'){
-        client.commands.get('settings-leave').execute(message, args,client);
-    }
-    if(command === 'settings-logs'){
-        client.commands.get('settings-logs').execute(message, args,client);
-    }
-
-    if(command === 'settings-hobby'){
-        client.commands.get('settings-hobby').execute(message, args,client);
-    }
-
-      if(command === 'gift'){
-        client.commands.get('gift').execute(message, args,client);
-    }
-    if(command === 'settings-bio'){
-        client.commands.get('settings-bio').execute(message, args,client);
-    }
-    if(command === 'donate'){
-        client.commands.get('donate').execute(message, args,client);
-    }
-    if(command === 'premium'){
-      client.commands.get('premium').execute(message, args,client);
-  }
-  if(command === 'weekly'){
-    client.commands.get('weekly').execute(message, args,client);
-  }
-  if(command === 'dig'){
-    client.commands.get('dig').execute(message, args,client);
-}
-if(command === 'leaderboard'){
-  client.commands.get('leaderboard').execute(message, args,client);
-}
-if(command === 'lottery'){
-  client.commands.get('lottery').execute(message, args,client);
-}
-if(command === 'treasure'){
-  client.commands.get('treasure').execute(message, args,client);
-}
-if(command === 'rank'){
-  client.commands.get('rank').execute(message, args,client);
-}
-if(command === 'leaderboard'){
-  client.commands.get('leaderboard').execute(message, args,client);
-}
-
-  
     
-    
-
    
-    
-    
-    if(message.content.startsWith(prefix + 'serverinfo')){
-    //  var categories = message.guild.categories.size;
-      //console.log(categories)
-      //const categoryChannels = message.guild.channels.forEach(channel => channel.type === "category"); 
-      //console.log(categoryChannels)
-     // var voice_channles = message.guild.channels.filter((c) => c.type === "voice").size
-   //  console.log(message.guild.categories)
-      var embed = new Discord.MessageEmbed();
-      embed.setTitle(`Server Info`);
-      const {guild} = message;
-      const icon = guild.iconURL()
-      var serverIcon = message.guild.iconURL();
-      const ownername = message.guild.members.cache.get(message.guild.ownerId);
-      console.log(ownername);
-      embed.addFields({name:'Server name -',value:`${message.guild.name}`},
-      {name:'ID:',value:`${message.guild.id}`},
-      {name:'Owner -',value:`<@!${message.guild.ownerId}>`},
-      {name:'Region',value:`${message.guild.preferredLocale}`},
-      
-      {name:'Total Members:',value: `${message.guild.memberCount}`},
-      {name:'Created At',value:`${message.guild.createdAt}`},
-      {name:'Total Roles',value:`${message.guild.roles.cache.size}`},
-      )
-      embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-      embed.setColor(`#404EED`);
-      embed.setTimestamp();
-     // console.log(message.guild.createdAt);
-      //console.log(message.guild.roles);
-      console.log(message.guild.channels);
-     // console.log(message.guild)
-      //console.log(message.guild.region)
-      embed.setThumbnail(icon)
-      message.channel.send({embeds:[embed]})
-    }
-  
-   
-})
-//keepAlive()
-//keepAlive()
-//keepAlive();
+});
 client.login(process.env.token);

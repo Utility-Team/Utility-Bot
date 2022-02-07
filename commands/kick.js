@@ -4,7 +4,7 @@ module.exports = {
     description: "This command kicks a member!",
     execute(message, args,client){
         var user =   message.guild.members.cache.find(member => member.id == message.author.id);
-        const target = message.mentions.users.first();
+        const target = message.mentions.users.first() ||  message.guild.members.cache.get(args[0]);
     if(target){
         
       
@@ -16,6 +16,8 @@ module.exports = {
             message.channel.send('kindly mention someone to kick')
             return
         }
+        let reason = args.slice(1).join(" ");
+        if(!reason) reason = 'no reason provided';
         const memberTarget = message.guild.members.cache.get(target.id);
       
         if(memberTarget.permissions.has('ADMINISTRATOR')){
@@ -26,20 +28,26 @@ module.exports = {
          
 
         }else{
-     if(message.mentions.members.first().roles.highest.position >= user.roles.highest.position){
+     if(memberTarget.roles.highest.position >= user.roles.highest.position){
         const embed = new Discord.MessageEmbed();
         embed.setTitle(`❌Can't kick your role should be higher than the mentioned member's role`);
         message.channel.send({embeds:[embed]})
         }else{
         
             
-                if(message.mentions.members.first().roles.highest.position < message.guild.members.resolve(client.user).roles.highest.position){    
-                
+                if(memberTarget.roles.highest.position < message.guild.members.resolve(client.user).roles.highest.position){    
+                    const embed2 = new Discord.MessageEmbed();
+                    embed2.setTitle(`From ${message.guild.name}`);
+                    embed2.setThumbnail(`${message.guild.iconURL()}`);
+                    embed2.addFields({name:`**Action: You have been kicked**`,value:`Reason: ${reason}`});
+                    embed2.setTimestamp();
+                    memberTarget.send({embeds:[embed2]});
                     memberTarget.kick();
                     const embed = new Discord.MessageEmbed();
                     embed.setTitle(`✅ ${memberTarget.user.username} has been kicked successfully`);
                     embed.setTimestamp();
-                    message.channel.send({embeds:[embed]})
+                    message.channel.send({embeds:[embed]});
+                  
                 
                 }else{
                      const embed = new Discord.MessageEmbed();
@@ -50,12 +58,12 @@ module.exports = {
     }
     }else{
         const embed = new Discord.MessageEmbed();
-        embed.setTitle(`${message.member.user.username} You do not have permissions to kick someone`)
+        embed.setTitle(`${message.member.user.username}, You do not have permissions to kick someone`)
         message.channel.send({embeds:[embed]})
     }
     }else{
         const embed = new Discord.MessageEmbed();
-        embed.setTitle(`${message.author.username} Please mention a person who is in the server`);
+        embed.setTitle(`${message.author.username}, Please mention a person who is in the server`);
         message.channel.send({embeds:[embed]})        
     }
   }

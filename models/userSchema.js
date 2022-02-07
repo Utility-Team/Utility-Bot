@@ -187,7 +187,99 @@ const userSchema = new mongoose.Schema({
     //last sell
     lastsell:{type:Number,require:true},
     //last use
-    lastuse:{type:Number,require:true}
+    lastuse:{type:Number,require:true},
+    //last scramble
+    lastscramble:{type:Number,require:true},
+    //beast pc
+    beastpc:{type:Number,require:true},
+    //monitor
+    monitor:{type:Number,require:true},
+    //black mouse
+    blackmouse:{type:Number,require:true},
+    //white mouse
+    whitemouse:{type:Number,require:true},
+    //black rgb keyboard
+    blackkeyboard:{type:Number,require:true},
+    //white rgb keyboard
+    whitekeyboard:{type:Number,require:true},
+    //laptop
+    laptop:{type:Number,require:true},
+    //mobile
+    mobile:{type:Number,require:true},
+    //total money donated
+    totalmoneydonated:{type:Number,require:true},
+    //total money received
+    totalmoneyreceived:{type:Number,require:true},
+    //total items donated
+    totalitemsdonated:{type:Number,require:true},
+    //total items received
+    totalitemsreceived:{type:Number,require:true},
+    //all inventory items
+    inventory:{type:Array,require:true},
+    //avatar
+    avatar:{type:String,require:true},
+    //credit points
+    creditpoints:{type:Number,require:true},
+    //badges
+    badges:{type:Array,require:true},
+    //rewards
+    rewards:{type:Array,require:true},
+    //premium type
+    premiumtype:{type:Number,require:true},
+    //last trade
+    lasttrade:{type:Number,require:true},
+    //last weekly
+    lastweekly:{type:Number,require:true},
+    //last shares
+    lastshares:{type:Number,require:true},
+    //last leaderboard
+    lastleaderboard:{type:Number,require:true},
+    //last coinflip
+    lastcoinflip:{type:Number,require:true},
+    //last withdraw
+    lastwith:{type:Number,require:true},
+    //last deposit
+    lastdep:{type:Number,require:true},
+    //last gift
+    lastgift:{type:Number,require:true},
+    //background
+    background:{type:String,require:true},
+    //total races
+    totalraces:{type:Number,require:true},
+    //total races won
+    raceswon:{type:Number,require:true},
+    //total races lost
+    raceslost:{type:Number,require:true},
+    //avg speed
+    avgspeed:{type:Array,require:true},
+    //best speed
+    bestspeed:{type:Number,require:true},
+    //scramble number
+    scramble:{type:Number,require:true},
+    //last race leaderboard
+    lastraceleaderboard:{type:Number,require:true},
+    //cars
+    cars:{type:Array,require:true},
+    minipurchased:{type:Boolean,require:true},
+    //suv purchased
+    suvpurchased:{type:Boolean,require:true},
+    //sedan
+    sedanpurchased:{type:Boolean,require:true},
+    //truck
+    truckpurchased:{type:Boolean,require:true},
+    //jeep
+    jeeppurchased:{type:Boolean,require:true},
+    sportscarpurchased:{type:Boolean,require:true},
+    supercar:{type:Boolean,require:true},
+    f1carpurchased:{type:Boolean,require:true},
+    equippedcar:{type:String,require:true},
+    ecarimage:{type:String,require:true},
+    ecaremoji:{type:String,require:true},
+    lootbox:{type:Number,require:true},
+    collect:{type:String,require:true},
+    lastplay:{type:Number,require:true},
+ 
+
 });
 const model = mongoose.model('UserModels',userSchema);
 module.exports = model;

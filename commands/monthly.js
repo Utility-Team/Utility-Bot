@@ -1,38 +1,40 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports={
     name:'monthly',
     async execute(message,args){
      let userData = await userModel.findOne({userID:message.author.id});
+     let serverData = await serverModel.findOne({guildID:message.guild.id});
      if(userData){
     
-          let userinfo = await userModel.findOne({userID:message.author.id});
-          if(userinfo){
-                if(userinfo.xp / 1500 === 0){
-                  const response = await userModel.findOneAndUpdate({
-                      userID:message.author.id,
-                    },
-                    {
-                      xp:userinfo.xp + 15,
-                      level:userinfo.level + 1,
-                      commands:userinfo.commands + 1
-
-                      }
-                    
-                    );
-                }else{
-                  const response = await userModel.findOneAndUpdate({
-                      userID:message.author.id,
-                    },
-                    {
-                      xp:userinfo.xp + 15,
-                      commands:userinfo.commands + 1
-
-                    }
-                    
-                    );
-                }
-          }
+      let userinfo = await userModel.findOne({userID:message.author.id});
+      if(userinfo){
+        if(userinfo.xp / 1500 === 0){
+          const response = await userModel.findOneAndUpdate({
+              userID:message.author.id,
+            },
+            {
+              $inc:{
+                xp:1,
+                level:1,
+                commands:1
+              },
+            }
+          );
+        }else{
+          const response = await userModel.findOneAndUpdate({
+              userID:message.author.id,
+            },
+            {
+              $inc:{
+                xp:15,
+                commands:1
+              }
+            }
+          );
+        }
+      }
           let lastmonthly = userData.monthlytime;
           var d = new Date();
           var n = d.getTime();
@@ -40,11 +42,12 @@ module.exports={
             if(userData.job !== ''){
                  let totalwork = userData.totalwork;
                   let salary = userData.salary;
-                  let daily = 1000 * userData.level + salary;
-              if(userData.wallet < 1000000000 && userData.wallet + daily <= 1000000000){
+                  let daily =  userData.level * 100 + salary;
+                  let monthly = 5 * daily;
+              if(userData.wallet < 5000000000 && userData.wallet + monthly <= 5000000000){
                
-                  let balance = userData.wallet + daily;
-                  let networth = userData.networth + daily;
+                  let balance = userData.wallet + monthly;
+                  let networth = userData.networth + monthly;
                   var d2 = new Date();
                   var n2 = d.getTime();
                   const response = await userModel.findOneAndUpdate({
@@ -69,7 +72,7 @@ module.exports={
                     msec -= ss * 1000;
                     const embed = new Discord.MessageEmbed();
                     embed.setTitle(`${message.author.username}, Here are your monthly coins!`);
-                    embed.addFields({name:`<:UC:878195863413981214> ${daily} were placed in your wallet`,value:`Current Wallet Balance - <:UC:878195863413981214> ${balance}`},{name:'You can get monthly again in ',value:`${hh}hrs`});
+                    embed.addFields({name:`<:UC:878195863413981214> ${monthly} were placed in your wallet`,value:`Current Wallet Balance - <:UC:878195863413981214> ${balance}`},{name:'You can get monthly again in ',value:`${hh}hrs`});
                     embed.setFooter( `Requested by ${message.author.username}`,message.author.displayAvatarURL());
                     embed.setTimestamp();
                     message.channel.send({embeds:[embed]});
@@ -107,7 +110,8 @@ module.exports={
               }
           }
       }else{
-       message.channel.send(`${message.author}, You are not registered to the game. Please use join command to join the game.`);
+        message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+       
       }
     }
 }

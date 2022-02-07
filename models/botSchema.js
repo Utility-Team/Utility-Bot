@@ -63,7 +63,21 @@ const botSchema = new mongoose.Schema({
   teslapurchaseid:{type:Number,require:true},
   teslasellid:{type:Number,require:true},
   lastcryptopurchaseid:{type:Number,require:true},
-  lastcryptosellid:{type:Number,require:true}
+  lastcryptosellid:{type:Number,require:true},
+  pcvalue:{type:Number,require:true},
+  monitorvalue:{type:Number,require:true},
+  blackmousevalue:{type:Number,require:true},
+  whitemousevalue:{type:Number,require:true},
+  blackkeyboardvalue:{type:Number,require:true},
+  whitekeyboardvalue:{type:Number,require:true},
+  laptopvalue:{type:Number,require:true},
+  mobilevalue:{type:Number,require:true},
+  spideyvalue:{type:Number,require:true},
+  santavalue:{type:Number,require:true},
+  jedilightsabervalue:{type:Number,require:true},
+  sithlightsabervalue:{type:Number,require:true},
+  cars:{type:Array,require:true},
+  totalseen:{type:Number,require:true}
 });
 const model = mongoose.model('botModels',botSchema);
 module.exports = model;

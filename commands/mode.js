@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports={
     name:'mode',
     async execute(message,args){
@@ -10,6 +11,7 @@ module.exports={
          argsone_name = argsone.toLowerCase();
         }
         let userData =  await userModel.findOne({userID:message.author.id});
+        let serverData = await serverModel.findOne({guildID:message.guild.id});
         if(userData){
             let userinfo = await userModel.findOne({userID:message.author.id});
             if(userinfo){
@@ -53,7 +55,7 @@ module.exports={
                   }else{
                       message.channel.send(`${message.author}, your gameplay mode is already **active** `);
                   }
-                }else if(argsone_name === 'unactive'){
+                }else if(argsone_name === 'unactive' || argsone_name === 'passive'){
                     var d = new Date();
                     var n = d.getTime();
                     var lastpassive = userData.lastpassive;
@@ -106,7 +108,8 @@ module.exports={
                 message.channel.send({embeds:[embed]});
             }
         }else{
-            message.channel.send(`${message.author}, You haven't joined the currency game. Please type ;join to join the game.`)
+          message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+           
         }
     }
 }

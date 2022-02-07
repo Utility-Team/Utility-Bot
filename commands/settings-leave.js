@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const serverModel = require('../models/profileSchema');
 module.exports={
     name:'settings-leave',
+    aliases:['settings-leave','settingsleave'],
     async execute(message,args){
         let serverData = await serverModel.findOne({guildID:message.guild.id});
         let argsone_name;

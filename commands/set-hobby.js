@@ -1,9 +1,11 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports = {
     name:`set-hobby`,
     async execute(message,args){
         let userData = await userModel.findOne({userID:message.author.id});
+        let serverData = await serverModel.fidnOne({guildID:message.guild.id});
         if(userData){
          let hobby = args.join(' ');
          if(hobby && hobby !== ''){
@@ -14,7 +16,7 @@ module.exports = {
                     }
                 );
                 const embed = new Discord.MessageEmbed();
-                embed.setTitle(`${message.author.username}, Your hobby list has been updated successsfully`);
+                embed.setTitle(`${message.author.username}, Your hobby list has been updated successfully`);
                 embed.setColor(`#30CC71`);
                 message.channel.send({embeds:[embed]});
               }else{
@@ -25,7 +27,8 @@ module.exports = {
          }
          
         }else{
-            message.channel.send(`${message.author}, You haven't joined the currency game. Please use join command to join the game.`);
+            message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+
         }
     }
 }

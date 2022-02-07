@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const profileModel = require('../models/profileSchema');
 module.exports={
     name:'cwelcome',
+    aliases:['cwelcome','welcome'],
     async execute(message,args){
         if(args[0]){
           if(message.member.permissions.has('ADMINISTRATOR')){
@@ -18,7 +19,8 @@ module.exports={
                       }
                       )
                     const embed = new Discord.MessageEmbed();
-                    embed.setTitle(`${message.author.username} welcome embed channel has been configured successfully`);
+                    embed.setTitle(`✅ Welcome embed channel has been configured successfully`);
+                    embed.setColor(`#30CC71`);
                     message.channel.send({embeds:[embed]});
                   }
                   const logsID = profileData.logschannel
@@ -27,7 +29,6 @@ module.exports={
                     console.log(logs_channel)
                     if(logs_channel){
                     const embed = new Discord.MessageEmbed();
-                  //  const new_member = member.guild.members.cache.find(i=>i.id === );
                     embed.setTitle(`✅ Welcome Embed Channel Configured`);
                     embed.setColor(`#30CC71`)
                 
@@ -42,13 +43,13 @@ module.exports={
                   message.channel.send({embeds:[embed]});
               }
             }else{
-              var embed = new Discord.MessageEmbed();
-              embed.setTitle(`${message.author.username} Please mention a channel to configure`);
+              const embed = new Discord.MessageEmbed();
+              embed.setTitle(`${message.author.username}, You don't have the perms to configure welcome embed`);
               message.channel.send({embeds:[embed]});
             }
       }else{
-        const embed = new Discord.MessageEmbed();
-        embed.setTitle(`${message.author.username}, You don't have the perms to configure welcome embed`);
+        var embed = new Discord.MessageEmbed();
+        embed.setTitle(`${message.author.username} Please mention a channel to configure`);
         message.channel.send({embeds:[embed]});
       }
     }

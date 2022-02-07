@@ -1,9 +1,11 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports = {
     name:'gamble',
     async execute(message,args){
       let userData = await userModel.findOne({userID:message.author.id});
+      let serverData = await serverModel.findOne({guildID:message.guild.id});
       if(userData){
         if(args[0]){
           let number = args[0];
@@ -36,6 +38,151 @@ module.exports = {
                           );
                         } 
                     }
+                    async function check_Rewards(achievement,reward1,badge,power,category,prize,type){
+                      if(userData.rewards && userData.badges){
+                          if(userData.rewards.length>0){
+                              let check = 0;
+                              for(var x = 0;x<=userData.rewards.length;x++){
+                                  if(userData.rewards[x]){
+                                      if(userData.rewards[x].name === achievement){
+                                          check = 5;
+                                          console.log('it already exists');
+                                          return;
+                                      }
+                                      if(x === userData.rewards.length && check <5){
+                                          const embed = new Discord.MessageEmbed();
+                                          embed.setTitle(`🎉 Unlocked New Achievement!`);
+                                          embed.setDescription(`You have unlocked **${achievement} achievement** and your rewards are **${reward1} & ${badge}**`);
+                                          embed.setTimestamp();
+                                          message.channel.send({embeds:[embed]});
+                                          let rewardsbadge = userData.rewards;
+                                          let badgeData = userData.badges;
+                                          let newrewardsData = {
+                                              name:achievement,
+                                              reward:reward1,
+                                              badge:badge,
+                                              category:category
+                                          }
+                                          let newbadgeData = {
+                                              name:achievement,
+                                              badge:badge,
+                                              power:power,
+                                              category:category
+                                          }
+                                          rewardsbadge.push(newrewardsData);
+                                          badgeData.push(newbadgeData);
+                                          if(type === 'xp'){
+                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                                $inc:{
+                                                  xp:prize
+                                                },
+                                                rewards:rewardsbadge,
+                                                badges:badgeData
+                                            });
+                                          }else{
+                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                              $inc:{
+                                                networth:prize,
+                                                wallet:prize
+                                              },
+                                              rewards:rewardsbadge,
+                                              badges:badgeData
+                                          });
+                                          }
+                                      }
+                                  }else{
+                                      const embed = new Discord.MessageEmbed();
+                                      embed.setTitle(`🎉 Unlocked New Achievement!`);
+                                      embed.setDescription(`You have unlocked **${achievement} achievement** and your rewards are **${reward1} & ${badge}**`);
+                                      embed.setTimestamp();
+                                      message.channel.send({embeds:[embed]});
+                                      let rewardsbadge = userData.rewards;
+                                      let badgeData = userData.badges;
+                                      let newrewardsData = {
+                                          name:achievement,
+                                          reward:reward1,
+                                          badge:badge,
+                                          category:category
+                                      }
+                                      let newbadgeData = {
+                                          name:achievement,
+                                          badge:badge,
+                                          power:power,
+                                          category:category
+                                      }
+                                      rewardsbadge.push(newrewardsData);
+                                      badgeData.push(newbadgeData);
+                                      if(type === 'xp'){
+                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                            $inc:{
+                                              xp:prize
+                                            },
+                                            rewards:rewardsbadge,
+                                            badges:badgeData
+                                        });
+                                      }else{
+                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                          $inc:{
+                                            networth:prize,
+                                            wallet:prize
+                                          },
+                                          rewards:rewardsbadge,
+                                          badges:badgeData
+                                        });
+                                      }
+                                      return;
+                                  }
+                                  
+                              }
+                          }else{
+                              const embed = new Discord.MessageEmbed();
+                                      embed.setTitle(`🎉 Unlocked New Achievement!`);
+                                      embed.setDescription(`You have unlocked **${achievement} achievement** and your rewards are **${reward1} & ${badge}**`);
+                                      embed.setTimestamp();
+                                      message.channel.send({embeds:[embed]});
+                                      let rewardsbadge = [];
+                                      let badgeData = []
+                                      let newrewardsData = {
+                                          name:achievement,
+                                          reward:reward1,
+                                          badge:badge,
+                                          category:'Donation'
+                                      }
+                                      let newbadgeData = {
+                                          name:achievement,
+                                          badge:badge,
+                                          power:power,
+                                          category:'Donation'
+                                      }
+                                      rewardsbadge.push(newrewardsData);
+                                      badgeData.push(newbadgeData);
+                                      if(type === 'xp'){
+                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                            $inc:{
+                                              xp:prize
+                                            },
+                                            rewards:rewardsbadge,
+                                            badges:badgeData
+                                        });
+                                      }else{
+                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                          $inc:{
+                                            networth:prize,
+                                            wallet:prize
+                                          },
+                                          rewards:rewardsbadge,
+                                          badges:badgeData
+                                        });
+                                      }
+                          }
+                      }
+                    }
+                    let avatar;
+                    if(userData.avatar !== '' && userData.premium === 'enable'){
+                      avatar = userData.avatar;
+                    }else{
+                      avatar = message.author.displayAvatarURL();
+                    }
                     
                     if(userData.wallet < number){
                         const embed = new Discord.MessageEmbed();
@@ -43,7 +190,16 @@ module.exports = {
                         message.channel.send({embeds:[embed]});
                     
                     }else{
-                      if(number>=20){
+                      if(number>=20){              
+                        let timeup;
+                        let timeup2;
+                        if(userData.premium === 'enable'){
+                          timeup = 5000;
+                          timeup2 = 5;
+                        }else{
+                          timeup = 3000;
+                          timeup2 = 3;
+                        }
                         if(number<=150000){
                         
                                 let lastgamble = userData.lastgamble;
@@ -57,8 +213,8 @@ module.exports = {
                                 let max_value = userData.wallet + parseInt(number);
                                 console.log('max value : ' + max_value);
                                 console.log('current balance : ' + userData.wallet);
-                                if(n - lastgamble >= 5000){
-                                  if(userData.wallet < 1000000000 && max_value <= 1000000000){
+                                if(n - lastgamble >= timeup){
+                                  if(userData.wallet < 5000000000 && max_value <= 5000000000){
                                     if(bot_score < user_score){
                                       var d = new Date();
                                      var n = d.getTime();
@@ -85,10 +241,22 @@ module.exports = {
                                        );
                                      embed.setTitle(`${message.author.username} Played and won the gamble!`);
                                      embed.addFields({name:`Amount Won`,value:`<:UC:878195863413981214> ${amount_won}`},{name:`You got`,value:`${user_score} in dice roll 🎲`},{name:`Utility got`,value:`${bot_score} in dice roll 🎲`});
-                                     embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+                                     embed.setFooter(`Requested by ${message.author.username}`,avatar);
                                      embed.setTimestamp();
                                      embed.setColor(`#30CC71`);
                                      message.channel.send({embeds:[embed]});
+                                     if(userData.totalgamble>100){
+                                        check_Rewards('Successfully playing 100 gambles','500 xp','<:supergamblerbadge:925733231532322837>',1,'Gamble',500,'xp');
+                                     }
+                                     if(userData.wongamble>100){
+                                       check_Rewards('Winning 100 gambles','<:uc:922720730272137256> 15k','<:supergamblerbadge:925733231532322837>',2,'Gamble',15000,'money');
+                                     }
+                                     if(userData.totalgamble>1000){
+                                      check_Rewards('Successfully playing 100 gambles','<:uc:922720730272137256> 50k','<:playing1000gambles:925737559689150475>>',4,'Gamble',50000,'money');
+                                     }
+                                     if(userData.wongamble>1000){
+                                      check_Rewards('Winning 1000 gambles','<:uc:922720730272137256> 500k','<:winning1000gamblesbadge:938451521241239612>',4,'Gamble',500000,'money');
+                                     }
                                    }else if(bot_score > user_score){
                                      var d = new Date();
                                      var n = d.getTime();
@@ -114,10 +282,16 @@ module.exports = {
                                        );
                                      embed.setTitle(`${message.author.username} Played and lost the gamble!`);
                                      embed.addFields({name:`Amount lost`,value:`<:UC:878195863413981214> ${amount_lost}`},{name:`You got`,value:`${user_score} in dice roll 🎲`},{name:`Utility got`,value:`${bot_score} in dice roll 🎲`});
-                                     embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+                                     embed.setFooter(`Requested by ${message.author.username}`,avatar);
                                      embed.setTimestamp();
                                      embed.setColor('#FF470F');
                                      message.channel.send({embeds:[embed]});
+                                     if(userData.totalgamble>100){
+                                      check_Rewards('Successfully playing 100 gambles','500 xp','<:supergamblerbadge:925733231532322837>',1,'Gamble',500,'xp');
+                                     }
+                                     if(userData.totalgamble>1000){
+                                      check_Rewards('Successfully playing 1000 gambles','<:uc:922720730272137256> 50k','<:playing1000rpsgamesbadge:925749675020124252>',4,'Gamble',50000,'money');
+                                     }
                                    }else{
                                      var d = new Date();
                                      var n = d.getTime();
@@ -137,9 +311,15 @@ module.exports = {
                                        );
                                      embed.setTitle(`${message.author.username} Played and tie the gamble!`);
                                      embed.addFields({name:`Amount Won`,value:`0`},{name:`You got`,value:`${user_score} in dice roll 🎲`},{name:`Utility got`,value:`${bot_score} in dice roll 🎲`});
-                                     embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+                                     embed.setFooter(`Requested by ${message.author.username}`,avatar);
                                      embed.setTimestamp();
                                      message.channel.send({embeds:[embed]});
+                                     if(userData.totalgamble>100){
+                                      check_Rewards('Successfully playing 100 gambles','500 xp','<:supergamblerbadge:925733231532322837>',1,'Gamble',500,'xp');
+                                     }
+                                     if(userData.totalgamble>1000){
+                                      check_Rewards('Successfully playing 1000 gambles','<:uc:922720730272137256> 50k','<:playing1000rpsgamesbadge:925749675020124252>',4,'Gamble',50000,'money');
+                                     }
 
                                    }
                                   }else{
@@ -150,16 +330,19 @@ module.exports = {
                                    
                                   }
                                 }else{
-                                      let next_work = n - lastgamble ;
-                                  var msec = next_work;
-                                  var hh = Math.floor(msec / 1000 / 60 / 60);
-                                  msec -= hh * 1000 * 60 * 60;
-                                  var mm = Math.floor(msec / 1000 / 60);
-                                  msec -= mm * 1000 * 60;
+                                  var msec = n - lastgamble;
+                                  console.log(msec);
                                   var ss = Math.floor(msec / 1000);
-                                  msec -= ss * 1000;
-                                  var time = 60 - ss;
-                                  message.channel.send(`${message.author}, You are in a cooldown please try this command after ${ss} seconds `);
+                                  var second = timeup2 - ss;
+                                  if(userData.premium !== 'enable'){
+                                    message.channel.send(`${message.author}, You are in a cooldown please try this command after ${ss} seconds `);
+                                  }else{
+                                    const embed = new Discord.MessageEmbed();
+                                    embed.setTitle(`Chill bro!`);
+                                    embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use gamble again!.`);
+                                    embed.setColor('#025CFF');
+                                    message.channel.send({embeds:[embed]});
+                                  }
                                 }
                         }else{
                           message.channel.send(`${message.author}, You can't play a gamble of more than 150000 coins`);
@@ -186,7 +369,8 @@ module.exports = {
             message.channel.send({embeds:[embed]});
         }
       }else{
-        message.channel.send(`${message.author}, You are not registered to the game. Please use join command to join the game.`);
+        message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+       
       }
     }
 }

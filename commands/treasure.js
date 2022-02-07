@@ -1,10 +1,39 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports = {
     name:'treasure',
     async execute(message,args){
         let userData = await userModel.findOne({userID:message.author.id});
+        let serverData = await serverModel.findOne({guildID:message.guild.id});
         if(userData){
+            let userinfo = await userModel.findOne({userID:message.author.id});
+            if(userinfo){
+              if(userinfo.xp / 1500 === 0){
+                const response = await userModel.findOneAndUpdate({
+                    userID:message.author.id,
+                  },
+                  {
+                    $inc:{
+                      xp:1,
+                      level:1,
+                      commands:1
+                    },
+                  }
+                );
+              }else{
+                const response = await userModel.findOneAndUpdate({
+                    userID:message.author.id,
+                  },
+                  {
+                    $inc:{
+                      xp:15,
+                      commands:1
+                    }
+                  }
+                );
+              }
+          }
             if(userData.boat){
                 let number = args[0];
                 if(number){
@@ -18,11 +47,30 @@ module.exports = {
                                 }else{
                                     lasttreasure = 0;
                                 }
+                                let avatar;
+                                if(userData.avatar){
+                                    if(userData.avatar !== '' && userData.premium === 'enable'){
+                                        avatar = userData.avatar;
+                                    }else{
+                                        avatar = message.author.displayAvatarURL();
+                                    }
+                                }else{
+                                    avatar = message.author.displayAvatarURL();
+                                }
                                 var d = new Date();
                                 var n = d.getTime();
-                                if(n - lasttreasure >= 30000){
+                                let timeup;
+                                let timeup2;
+                                if(userData.premium === 'enable'){
+                                  timeup = 15000;
+                                  timeup2 = 15;
+                                }else{
+                                  timeup = 30000;
+                                  timeup2 = 30;
+                                }
+                                if(n - lasttreasure >= timeup){
 
-                                    if(userData.wallet < 1000000000 && userData.wallet + parseInt(number) <= 1000000000){
+                                    if(userData.wallet < 5000000000 && userData.wallet + parseInt(number) <= 5000000000){
                                             var d2 = new Date();
                                             var n2 = d2.getTime();
                                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
@@ -31,7 +79,7 @@ module.exports = {
                                             const embed = new Discord.MessageEmbed();
                                             embed.setAuthor(`${message.author.username}, You have arrived to the island!`);
                                             embed.setDescription(`Time for treasure hunt! guess the treasure box from below!`);
-                                            embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+                                            embed.setFooter(`Requested by ${message.author.username}`,avatar);
                                             embed.setTimestamp();
                                             embed.setColor(`#404EED`);
                                             let treasuregot = Math.floor(Math.random(1,9) * 9 + 1);
@@ -109,21 +157,21 @@ module.exports = {
                                             const embed2 = new Discord.MessageEmbed();
                                             embed2.setAuthor(`${message.author.username}, You found the treasure!`);
                                             embed2.setDescription(`You won the treasure hunt and got <:UC:878195863413981214> ${number}`);
-                                            embed2.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
                                             embed2.setTimestamp();
                                             embed2.setColor(`#30CC71`);
 
                                             const embed3 = new Discord.MessageEmbed();
                                             embed3.setAuthor(`${message.author.username}, You failed!`);
                                             embed3.setDescription(`You failed to find the treasure and lost <:UC:878195863413981214> ${number} amount!`);
-                                            embed3.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+                                            embed3.setFooter(`Requested by ${message.author.username}`,avatar);
                                             embed3.setTimestamp();
                                             embed3.setColor('#ED4245');
 
                                             const embed4 = new Discord.MessageEmbed();
                                             embed4.setAuthor(`${message.author.username}, 1 attempt left!`);
                                             embed4.setDescription(`You chose the wronge one and You have 1 attempt left!`);
-                                            embed4.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+                                            embed4.setFooter(`Requested by ${message.author.username}`,avatar);
                                             embed4.setTimestamp();
                                             embed4.setColor('#ED4245');
 
@@ -236,11 +284,19 @@ module.exports = {
                                             var msec = n - lasttreasure;
                                             console.log(msec);
                                             var ss = Math.floor(msec / 1000);
-                                            var second = 30 - ss;
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`Wait bro!`);
-                                            embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to play treasure hunt again!. The default cooldown is of **30** seconds but for premium users it is of **20** seconds to become a premium user use premium command.`);
-                                            message.channel.send({embeds:[embed]});
+                                            var second = timeup2 - ss;
+                                            if(userData.premium !== 'enable'){
+                                                const embed = new Discord.MessageEmbed();
+                                                embed.setTitle(`Wait bro!`);
+                                                embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to play treasure hunt again!. The default cooldown is of **30** seconds but for premium users it is of **20** seconds to become a premium user use premium command.`);
+                                                message.channel.send({embeds:[embed]});
+                                            }else{
+                                                const embed = new Discord.MessageEmbed();
+                                                embed.setTitle(`Chill bro!`);
+                                                embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use treasure again!.`);
+                                                embed.setColor('#025CFF');
+                                                message.channel.send({embeds:[embed]});
+                                            }
                                 
                                         }
                                
@@ -269,7 +325,8 @@ module.exports = {
                 message.channel.send(`${message.author}, You don't have boat to use treasure command.`);
             }
         }else{
-            message.channel.send(`${message.author}, You are not registered to the game. Please use join command to join the game.`);
+            message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+
         }
     }
 }

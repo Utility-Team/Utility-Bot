@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const profileModel = require('../models/profileSchema');
 module.exports={
     name:'clogs',
+    aliases:['clogs','logs'],
     async execute(message,args){
         if(args[0]){
           if(message.member.permissions.has('ADMINISTRATOR')){
@@ -17,9 +18,10 @@ module.exports={
                       logschannel:mentionchannel_id
                     }
                     )
-                  const embed = new Discord.MessageEmbed();
-                  embed.setTitle(`${message.author.username} logs channel has been configured successfully`);
-                  message.channel.send({embeds:[embed]});
+                    const embed = new Discord.MessageEmbed();
+                    embed.setTitle(`✅ Logs channel has been configured successfully`);
+                    embed.setColor(`#30CC71`);
+                    message.channel.send({embeds:[embed]});
                 }
                 
                   

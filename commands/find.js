@@ -1,13 +1,16 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports = {
     name:'find',
+    aliases:['find','search'],
     async execute(message,args){
       let bush;
       let bedroom;
       let car;
       let pocket;
       let userData = await userModel.findOne({userID:message.author.id});
+      let serverData = await serverModel.findOne({guildID:message.guild.id});
       if(userData){
         let userinfo = await userModel.findOne({userID:message.author.id});
         if(userinfo){
@@ -41,8 +44,17 @@ module.exports = {
         var d = new Date();
         var n = d.getTime();
         let lastfind = userData.lastfind;
-        if(n-lastfind >= 30000){
-            if(userData.wallet < 1000000000 && userData.wallet + 1500 <= 1000000000){
+        let timeup;
+        let timeup2;
+        if(userData.premium === 'enable'){
+          timeup = 15000;
+          timeup2 = 15;
+        }else{
+          timeup = 30000;
+          timeup2 =30;
+        }
+        if(n-lastfind >= timeup){
+            if(userData.wallet < 5000000000 && userData.wallet + 1500 <= 5000000000){
                     var d2 = new Date();
                     var n2 = d2.getTime();  
                     const response  = await userModel.findOneAndUpdate({userID:message.author.id},
@@ -208,15 +220,24 @@ module.exports = {
             var msec = n - lastfind;
             console.log(msec);
             var ss = Math.floor(msec / 1000);
-            var second = 30 - ss;
-            const embed = new Discord.MessageEmbed();
-            embed.setTitle(`Wait bro!`);
-            embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use find again!. The default cooldown is of **30** seconds but for premium users it is of **25** seconds to become a premium user use premium command.`);
-            message.channel.send({embeds:[embed]});
+            var second = timeup2 - ss;
+            if(userData.premium !== 'enable'){
+                const embed = new Discord.MessageEmbed();
+                embed.setTitle(`Wait bro!`);
+                embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use find again!. The default cooldown is of **30** seconds but for premium users it is of **25** seconds to become a premium user use premium command.`);
+                message.channel.send({embeds:[embed]});
+            }else{
+                const embed = new Discord.MessageEmbed();
+                embed.setTitle(`Chill bro!`);
+                embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use find again!.`);
+                embed.setColor('#025CFF');
+                message.channel.send({embeds:[embed]});
+            }
         }
     
       }else{
-          message.channel.send(`${message.author}, You haven't joined the currency game. Please use join command to join the game.`);
+        message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+         
       }
     }
 }

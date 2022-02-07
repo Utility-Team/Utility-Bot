@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 module.exports = {
   name:'inviteme',
+  aliases:['inviteme','invitebot'],
   async execute(message,args){
     const embed = new Discord.MessageEmbed();
     embed.setTitle('Utility the multipurpose bot your server needs!');

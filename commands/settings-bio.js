@@ -1,9 +1,12 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports={
     name:'settings-bio',
+    aliases:['settings-bio','settingsbio'],
     async execute(message,args){
         let userData = await userModel.findOne({userID:message.author.id});
+        let serverData = await serverModel.findOne({guildID:message.guild.id});
         let argsone_name;
         if(args[0]){
             argsone = args[0];
@@ -22,6 +25,8 @@ module.exports={
                 message.channel.send({embeds:[embed]});
 
 
+            }else{
+                message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
             }
         }else{
             const embed = new Discord.MessageEmbed(); 

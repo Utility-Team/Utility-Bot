@@ -10,6 +10,7 @@ const profileSchema = new mongoose.Schema({
     topic:{type:Number,require:true},
     truth:{type:Number,require:true},
     dare:{type:Number,require:true},
+    race:{type:Number,require:true},
     raid:{type:String,require:true,default:'enable'}
 });
 const model = mongoose.model('ProfileModels',profileSchema);

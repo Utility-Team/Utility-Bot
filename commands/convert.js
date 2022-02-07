@@ -52,7 +52,7 @@ module.exports = {
                       if(!isNaN(number) && Math.sign(number) === 1){
                         if(number % 1=== 0){
                               if(userData.cryptocoin >= args[0]){
-                                if(userData.wallet < 1000000000 && userData.wallet + parseInt(args[0]) <= 1000000000){
+                                if(userData.wallet < 5000000000 && userData.wallet + parseInt(args[0]) <= 5000000000){
                       
                                     var balance =userData.wallet + coin;
                                     var cryptocoin_new = userData.cryptocoin - args[0];

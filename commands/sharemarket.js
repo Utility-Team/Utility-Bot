@@ -1,37 +1,54 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
 const botModel = require('../models/botSchema');
+const serverModel = require('../models/profileSchema');
 module.exports = {
     name:'sharemarket',
     async execute(message,args){
-     
-      let botdata = await botModel.findOne({botid:1})
+      let botdata = await botModel.findOne({botid:1});
+      let serverData = await serverModel.findOne({guildID:message.guild.id});
       let userinfo = await userModel.findOne({userID:message.author.id});
-                if(userinfo){
-               if(userinfo.xp / 1500 === 0){
-                 const response = await userModel.findOneAndUpdate({
-                     userID:message.author.id,
-                   },
-                   {
-                     xp:userinfo.xp + 15,
-                     level:userinfo.level + 1,
-                     commands:userinfo.commands + 1
+      if(userinfo){
+     if(userinfo.xp / 1500 === 0){
+       const response = await userModel.findOneAndUpdate({
+           userID:message.author.id,
+         },
+         {
+           $inc:{
+             xp:15,
+             commands:1,
+             level:1
+           }
+         }
+       );
+     }else{
+      const response = await userModel.findOneAndUpdate({
+          userID:message.author.id,
+        },
+        {
          
-                    }
-                   
-                   );
-               }else{
-                const response = await userModel.findOneAndUpdate({
-                    userID:message.author.id,
-                  },
-                  {
-                    xp:userinfo.xp + 15,
-                    commands:userinfo.commands + 1
+          $inc:{
+            xp:15,
+            commands:1
+          }
+
+         }
         
-                   }
-                  
-                  );
-               }
+        );
+     }
+   }
+             const userData = await userModel.findOne({userID:message.author.id});
+             let avatar;
+             if(userData){
+             if(userData.avatar){
+                if(userData.avatar !== '' && userData.premium === 'enable'){
+                  avatar = userData.avatar;
+                }else{
+                  avatar = message.author.displayAvatarURL();
+                }
+              }else{
+                avatar = message.author.displayAvatarURL();
+              }
              }
              const shareUpdate =  async ()=>{
               let botdata = await botModel.findOne({botid:1});
@@ -164,15 +181,15 @@ module.exports = {
       let newbotdata = await botModel.findOne({botid:1});
       if(newbotdata){
         const embed = new Discord.MessageEmbed();
-        embed.setAuthor(`${message.author.username}, Here are the shares available!`,message.author.displayAvatarURL());
-        embed.addFields({name:`<:GoogleGLogo:878192149210992660> Alphabet`,value:`1 Share = ${newbotdata.alphabetvalue} Utility Coins`},
-        {name:`<:utility:875320356527804418> Utility Team`,value:`1 Share = ${newbotdata.utilityvalue} Utility Coins `},
-        {name:'<:facebookemoji:878190000485834802> Facebook',value:`1 Share = ${newbotdata.facebookvalue} Utility Coins`},
-        {name:`<:microsoftlogo:878189981129134090> Microsoft`,value:`1 Share = ${newbotdata.microsoftvalue} Utility Coins`},
-        {name:`<:applelogo:878189961151664138> Apple`,value:`1 Share = ${newbotdata.applevalue} Coins`},
-        {name:`<:TESLALOGO:878190186788425758> Tesla`,value:`1 Share = ${newbotdata.teslavalue} Utility Coins`}
+        embed.setAuthor(`${message.author.username}, Here are the shares available!`,avatar);
+        embed.addFields({name:`<:alphabet:939925643242659880> Alphabet`,value:`1 Share = <:uc:922720730272137256> ${newbotdata.alphabetvalue} Utility Coins`},
+        {name:`<:utility:875320356527804418> Utility Team`,value:`1 Share = <:uc:922720730272137256> ${newbotdata.utilityvalue} Utility Coins `},
+        {name:'<:fakebook:939924057497952356> Fakebook',value:`1 Share = <:uc:922720730272137256> ${newbotdata.facebookvalue} Utility Coins`},
+        {name:`<:hooli:939924424231100486> Hooli`,value:`1 Share = <:uc:922720730272137256> ${newbotdata.microsoftvalue} Utility Coins`},
+        {name:`<:PiedPiper:939924753915998218> Pied Piper`,value:`1 Share = <:uc:922720730272137256> ${newbotdata.applevalue} Coins`},
+        {name:`<:hola:939924607337644052> Hola Electric`,value:`1 Share = <:uc:922720730272137256> ${newbotdata.teslavalue} Utility Coins`}
         );
-        embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+        embed.setFooter(`use ${serverData.prefix}buy share name quantity (to buy share)`);
         embed.setTimestamp();
         message.channel.send({embeds:[embed]});
       }

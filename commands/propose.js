@@ -1,41 +1,43 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports={
     name:'propose',
+    aliases:['propose','marry'],
     async execute(message,args){
         const target = message.mentions.users.first();
         let userData = await userModel.findOne({userID:message.author.id});
+        let serverData = await serverModel.findOne({guildID:message.guild.id});
         if(userData){
             let userinfo = await userModel.findOne({userID:message.author.id});
             if(userinfo){
-                 if(userinfo.xp / 1500 === 0){
-                   const response = await userModel.findOneAndUpdate({
-                       userID:message.author.id,
-                     },
-                     {
-                       xp:userinfo.xp + 15,
-                       level:userinfo.level + 1,
-                       commands:userinfo.commands + 1
-         
-                       }
-                     
-                     );
-                 }else{
-                   let level = Math.round(userinfo.xp/1500);
-                   const response = await userModel.findOneAndUpdate({
-                       userID:message.author.id,
-                     },
-                     {
-                       xp:userinfo.xp + 15,
-                       commands:userinfo.commands + 1,
-                       level:level
-         
-                     }
-                     
-                     );
+              if(userinfo.xp / 1500 === 0){
+                const response = await userModel.findOneAndUpdate({
+                    userID:message.author.id,
+                  },
+                  {
+                    $inc:{
+                      xp:1,
+                      level:1,
+                      commands:1
+                    },
                   }
-                }
+                );
+              }else{
+                const response = await userModel.findOneAndUpdate({
+                    userID:message.author.id,
+                  },
+                  {
+                    $inc:{
+                      xp:15,
+                      commands:1
+                    }
+                  }
+                );
+              }
+            }
             if(target){
+             const memberTarget = message.guild.members.cache.get(target.id);
              let targetData = await userModel.findOne({userID:target.id});
              if(targetData){
                  if(userData.diamondring !== 0){
@@ -46,7 +48,7 @@ module.exports={
                    embed.setFooter(`Requested by ${message.author.username}`, message.author.displayAvatarURL());
                    embed.setTimestamp();
                    const embed2 = new Discord.MessageEmbed();
-                   embed2.setTitle(`${message.author.username} and ${target.username} are now married!.`)
+                   embed2.setTitle(`${message.author.username} and ${memberTarget.uesr.username} are now married!.`)
                    const row = new Discord.MessageActionRow()
                     .addComponents(
                         new Discord.MessageButton()
@@ -73,7 +75,7 @@ module.exports={
                                  diamondring:-1
                                 },
                                 partner:target.id,
-                                partnername:target.username + '#' + target.discriminator
+                                partnername:memberTarget.uesr.username + '#' + target.discriminator
                             });
                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                 $inc:{
@@ -86,7 +88,7 @@ module.exports={
                             await i.update({ embeds:[embed2],components:[]});
                         }else if(i.customId==='no'){
                             await i.update({components: [] });
-                            message.channel.send(`${message.author}, ${target.username} said no!`)
+                            message.channel.send(`${message.author}, ${memberTarget.user.username} said no!`)
                         }
                     });
 
@@ -111,7 +113,8 @@ module.exports={
                 message.channel.send({embeds:[embed]});
             }
         }else{
-            message.channel.send(`${message.author}, You are not registered to the game. Please use join command to join the game.`);
+          message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+
         }
     }
 }

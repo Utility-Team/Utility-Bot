@@ -1,40 +1,52 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports={
     name:'use',
+    aliases:['use','apply'],
     async execute(message,args){
         let userData = await userModel.findOne({userID:message.author.id});
+        let serverData = await serverModel.findOne({guildID:message.guild.id});
         if(userData){
-            let userinfo = await userModel.findOne({userID:message.author.id});
-            if(userinfo){
-           if(userinfo.xp / 1500 === 0){
-             const response = await userModel.findOneAndUpdate({
-                 userID:message.author.id,
-               },
-               {
-                 xp:userinfo.xp + 15,
-                 level:userinfo.level + 1,
-                 commands:userinfo.commands + 1
-     
+          let userinfo = await userModel.findOne({userID:message.author.id});
+          if(userinfo){
+            if(userinfo.xp / 1500 === 0){
+              const response = await userModel.findOneAndUpdate({
+                  userID:message.author.id,
+                },
+                {
+                  $inc:{
+                    xp:15,
+                    level:1,
+                    commands:1
+                  }
                 }
-               
-               );
-           }else{
-            const response = await userModel.findOneAndUpdate({
-                userID:message.author.id,
-              },
-              {
-                xp:userinfo.xp + 15,
-                commands:userinfo.commands + 1
-    
-               }
-              
               );
-           }
-         }
+            }else{
+              const response = await userModel.findOneAndUpdate({
+                  userID:message.author.id,
+                },
+                {
+                 $inc:{
+                   xp:15,
+                   commands:1
+                 }
+                }
+              );
+            }
+          }
+          let avatar;
+          if(userData.avatar){
+            if(userData.avatar !== '' && userData.premium === 'enable'){
+              avatar = userData.avatar;
+            }else{
+              avatar = message.author.displayAvatarURL();
+            }
+          }else{
+            avatar = message.author.displayAvatarURL();
+          }
             let argsone;
             let argsone_name;
-           
             let argstwo_name;
             let argsthree;
             let argsthree_name;
@@ -49,7 +61,7 @@ module.exports={
             }
             if(args[2]){
                  argsthree = args[2];
-                 argsthree_name = argstwo.toLowerCase();
+                 argsthree_name = argsthree.toLowerCase();
             }
             let lastuse;
             let d = new Date();
@@ -59,631 +71,385 @@ module.exports={
             }else{
               lastuse = 0;
             }
-          
-            
-            if(argsone_name){
-              if(n - lastuse >= 5000){
-                  if(argsone_name === 'lock'){
-                      if(userData.lock>= 1){
-                        let d2 = new Date();
-                        let n2 = d2.getTime();
-                        const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                          lastuse:n2
-                        });
-                        const response = await userModel.findOneAndUpdate({
-                            userID:message.author.id,
-                          },{
-                              lockactive:'enable'
-                          });
-                        const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                {
-                                    $inc:{
-                                        lock:-1,
-                                        nolock:1
-                                    }
-                                  
-                                }
-                        );
-                        const embed = new Discord.MessageEmbed();
-                        embed.setTitle(`:lock: Lock Added`)
-                        embed.setDescription(`${message.author}, lock has been added to your wallet and no one will be able to steal from you. Note this item is of one time use.`);
-                        embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                        embed.setTimestamp();
-                        embed.setColor(`#30CC71`);
-                        message.channel.send({embeds:[embed]});
-                      }else{
-                        if(userData.partner !== 0){
-                          let partnerid = userData.partner;
-                          let partnerData = await userModel.findOne({userID:partnerid});
-                          if(partnerData.lock >= 1){
-                            const embed =new Discord.MessageEmbed();
-                            embed.setAuthor(`${message.author.username}, You don't have lock so would you like to use your partner ${userData. partnername}'s lock. Use yes or no button to answer!`);
-                            embed.setTimestamp();
-                            const row = new Discord.MessageActionRow()
-                            .addComponents(
-                                new Discord.MessageButton()
-                                    .setCustomId('yes')
-                                    .setLabel('Yes')
-                                    .setStyle('SUCCESS'),
-                                new Discord.MessageButton()
-                                    .setCustomId('no')
-                                    .setLabel('No')
-                                    .setStyle('DANGER')
-                                
-                            );
-                          const m = await message.channel.send({embeds:[embed],components:[row]});
-                            const ifilter = i => i.user.id === message.author.id;
-        
-                            const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
-        
-                            collector.on('collect', async i => {
-                                console.log('hello there' + i.guildId);
-                                if (i.customId === 'yes') {
-                                  let d2 = new Date();
-                                  let n2 = d2.getTime();
-                                  const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                    lastuse:n2
-                                  });
-                                  const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                          {
-                                              $inc:{
-                                                  nolock:1
-                                              }
-                                            
+            //partner function
+            async function checkPartner(partnerID,item,emoji,category,quantity){
+              let check = 0;
+              let partnerData = await userModel.findOne({userID:partnerID});
+              if(partnerData.inventory){
+                  for(var x = 0;x<=partnerData.inventory.length;x++){
+                      if(partnerData.inventory[x]){
+                        if(partnerData.inventory[x].name === item){
+                          if(partnerData.inventory[x].quantity >= parseInt(quantity)){
+                                      if(item === partnerData.inventory[x].name && check < 5){
+                                        console.log('it came here yes');
+                                          check = 5;
+                                          let inventoryData = partnerData.inventory;
+                                          if(inventoryData[x].quantity>1){
+                                            console.log('it is here 2');
+                                            inventoryData[x].quantity = parseInt(inventoryData[x].quantity) - parseInt(quantity);
+                                          }else{
+                                              inventoryData.splice(x,1);
                                           }
-                                  );
-                                  const partnerresponse = await userModel.findOneAndUpdate({userID:partnerid},
-                                    {
-                                        $inc:{
-                                            lock:-1
-                                        }
-                                      
-                                    }
-                                );
-                                  const embed2 = new Discord.MessageEmbed();
-                                  embed2.setTitle(`:lock: Lock Added`)
-                                  embed2.setDescription(`${message.author}, lock has been added to your wallet and no one will be able to steal from you. Note this item is of one time use.`);
-                                  embed2.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                                  embed2.setTimestamp();
-                                  embed2.setColor(`#30CC71`);
-                                  await i.update({ embeds:[embed2],components:[]});
-                                }else if(i.customId==='no'){
-                                    await i.update({components:[]});
-                                }
-                            });
-        
-                            collector.on('end', collected => console.log(`Collected ${collected.size} items`));
-        
-                          }else{
-                            message.channel.send(`${message.author}, You don't own that item!`);
-                          }
+                                          const response = await userModel.findOneAndUpdate({userID:partnerID},
+                                          {
+                                              inventory:inventoryData
+                                          }    
+                                          );
+                                          const embed =new Discord.MessageEmbed();
+                                          embed.setAuthor(`${message.author.username}, You don't have ${item} so would you like to use your partner ${userData. partnername}'s ${item}. Use yes or no button to answer!`);
+                                          embed.setTimestamp();
+                                          const row = new Discord.MessageActionRow()
+                                          .addComponents(
+                                              new Discord.MessageButton()
+                                                  .setCustomId('yes')
+                                                  .setLabel('Yes')
+                                                  .setStyle('SUCCESS'),
+                                              new Discord.MessageButton()
+                                                  .setCustomId('no')
+                                                  .setLabel('No')
+                                                  .setStyle('DANGER')
+                                              
+                                          );
+                                          const m = await message.channel.send({embeds:[embed],components:[row]});
+                                            const ifilter = i => i.user.id === message.author.id;
+                        
+                                            const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
+                        
+                                            collector.on('collect', async i => {
+                                                console.log('hello there' + i.guildId);
+                                                if (i.customId === 'yes') {
+                                                      const embed2 = new Discord.MessageEmbed();
+                                                      embed2.setTitle(`${emoji} ${item} used!`);
+                                                      embed2.setDescription(`You have successfully used **1 ${emoji} ${item}**`);
+                                                      embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                                      embed2.setColor(`#30CC71`);
+                                                      embed2.setTimestamp();
+                                                      await i.update({embeds:[embed2],components:[]});
+                                                      let d2 = new Date();
+                                                      let n2 = d2.getTime();
+                                                      const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                                        lastuse:n2
+                                                      });
+                                                      if(item === 'Lock'){
+                                                          const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
+                                                                  {
+                                                                      $inc:{
+                                                                          nolock:1
+                                                                      }
+                                                                    
+                                                                  }
+                                                          );
+                                                      }
+                                                      if(item === 'Credit Points'){
+                                                        const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
+                                                          {
+                                                              $inc:{
+                                                                  banklimit:quantity
+                                                              }
+                                                            
+                                                          }
+                                                        );
+                                                      }
+                                                }else if(i.customId==='no'){
+                                                    await i.update({components:[]});
+                                                }
+                                            });
+                                            collector.on('end', collected => console.log(`Collected ${collected.size} items`));     
+                                      }
+                              }else{
+                                message.channel.send(`${message.author}, You don't own that item!`);
+                                return
+                              }
+                        }
+                      }else if(x === partnerData.inventory.length & check < 5){
+                        message.channel.send(`${message.author}, You don't own that item!`);
+                      }
+                  }
+              }else{
+                message.channel.send(`${message.author}, You don't own that item!`);
+              }
+            }
+            //use function
+            async function use(item,emoji,category,quantity){
+              let check = 0;
+              if(userData.inventory){
+                  for(var x = 0;x<=userData.inventory.length;x++){
+                      if(userData.inventory[x]){
+                        if(userData.inventory[x].name === item){
+                          if(parseInt(userData.inventory[x].quantity) >= parseInt(quantity)){
+                                      if(item === userData.inventory[x].name && check < 5){
+                                          if(item === 'Lock'){
+                                            const response = await userModel.findOneAndUpdate({
+                                              userID:message.author.id,
+                                            },{
+                                                lockactive:'enable'
+                                            });
+                                            const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
+                                                    {
+                                                        $inc:{
+                                                            nolock:1
+                                                        }
+                                                      
+                                                    }
+                                            );
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`${emoji} ${item} used!`);
+                                            embed2.setDescription(`You have successfully used **1 ${emoji} ${item}**`);
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
+                                          }
+                                          if(item === 'Beer'){
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`Drunk ${item}!`);
+                                            embed2.setDescription(`You drunk whole jug of ${emoji} ${item}!`);
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
+                                          }
+                                          if(item === 'Bubble Tea'){
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`Drunk ${item}!`);
+                                            embed2.setDescription(`You drunk whole ${emoji} ${item}!`);
+                                            embed2.addFields({name:`Rewards -`,value:`+ 50 xp`});
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
+                                          }
+                                          if(item === 'Coffee'){
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`Drunk ${item}!`);
+                                            embed2.setDescription(`You drunk whole ${emoji} ${item}!`);
+                                            embed2.addFields({name:`Rewards -`,value:`+ 50 xp`});
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
+                                          }
+                                          if(item === 'Green Apple'){
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`Ate ${item}!`);
+                                            embed2.setDescription(`You ate whole ${emoji} ${item}!`);
+                                            embed2.addFields({name:`Rewards -`,value:`+ 1500 xp`});
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
+                                          }
+                                          if(item === 'Pizza Slice'){
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`Ate ${item}!`);
+                                            embed2.setDescription(`You ate whole ${emoji} ${item}!`);
+                                            embed2.addFields({name:`Rewards -`,value:`+ 4500 xp
+                                             + increase in daily and monthly amount
+                                            `});
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
+                                          }
+                                          if(item === 'Credit Points'){
+                                            console.log('here 1');
+                                            const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
+                                                    {
+                                                        $inc:{
+                                                            banklimit:quantity
+                                                        }
+                                                      
+                                                    }
+                                            );
+                                            let banklimit;
+                                            if(userData.banklimit){
+                                              banklimit = userData.banklimit;
+                                            }else{
+                                              banklimit = 0;
+                                            }
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`${emoji} ${item} used!`);
+                                            embed2.setDescription(`You have successfully used **1 ${emoji} ${item} and your bank limit has been increased to ${userData.level * 10000 + banklimit + quantity}**`);
+                                            embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
+                                          }
+                                          check = 5;
+                                          let inventoryData = userData.inventory;
+                                          if(inventoryData[x].quantity>quantity){
+                                              inventoryData[x].quantity = parseInt(inventoryData[x].quantity) - parseInt(quantity);
+                                          }else{
+                                              inventoryData.splice(x,1);
+                                          }
+                                          const response = await userModel.findOneAndUpdate({userID:message.author.id},
+                                          {
+                                              inventory:inventoryData
+                                          }    
+                                          );
+                                          let d2 = new Date();
+                                          let n2 = d2.getTime();
+                                          const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                            lastuse:n2
+                                          });
+                                          return;
+                                      }
+                              }else{
+                                console.log(userData.inventory[x].quantity);
+                                message.channel.send(`${message.author}, You don't have that many ${userData.inventory[x].name} to use`);
+                                return
+                              }
+                        }
+                      }else if(x === userData.inventory.length & check < 5){
+                        if(userData.partner !== 0){
+                          console.log('partner confirmed');
+                          checkPartner(userData.partner,item,emoji,category,1);
                         }else{
-                          message.channel.send(`${message.author}, You don't own that item!`);
+                          message.channel.send(`${message.author}, You don't own that item to use`);
                         }
                       }
+                  }
+              }else{
+                  message.channel.send(`${message.author}, You don't own that item to use`);
+              }
+            }
+            if(argsone_name){
+              let timeup;
+              let timeup2;
+              if(userData.premium === 'enable'){
+                timeup = 3000;
+                timeup2 = 3;
+              }else{
+                timeup = 5000;
+                timeup2 =5;
+              }
+              if(n - lastuse >= timeup){
+                  if(argsone_name === 'lock'){
+                    if(userData.lock >= 1){
+                      const response = await userModel.findOneAndUpdate({
+                        userID:message.author.id,
+                      },{
+                          lockactive:'enable'
+                      });
+                      const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
+                              {
+                                  $inc:{
+                                      nolock:1
+                                  }
+                                
+                              }
+                      );
+                      const embed2 = new Discord.MessageEmbed();
+                      embed2.setTitle(`🔒 Lock added!`);
+                      embed2.setDescription(`You have successfully added **1 🔒 lock**`);
+                      embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                      embed2.setColor(`#30CC71`);
+                      embed2.setTimestamp();
+                      message.channel.send({embeds:[embed2]});
+                    }else{
+                      message.channel.send(`${message.author}, you don't have lock to use`);
+                    }
                   }
                   if(argsone_name === 'beer'){
-                    if(userData.beer >= 1){
-                        let d2 = new Date();
-                        let n2 = d2.getTime();
-                        const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                          lastuse:n2
-                        });
-                        const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                          {
-                              $inc:{
-                                  beer:-1,
-          
-                              } 
-                            
-                          }
-                        );
-                        let random = Math.floor(Math.random() * 5);
-                        if(random === 2 || random=== 3 || random=== 4){
-                          let randomcoin = Math.floor(Math.random()*1000);
-                          if(userData.wallet >= randomcoin){
-                          const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                            {
-                                $inc:{
-                                    wallet:-randomcoin,
-                                    networth:-randomcoin
-                                }
-                              
-                            }
-                          );
-                          message.channel.send(`${message.author} You drunk too much! and someone stole from you <:UC:878195863413981214> ${randomcoin}`);
-                        }else if(userData.bank>= randomcoin){
-                          const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                            {
-                                $inc:{
-                                    bank:-randomcoin,
-                                    networth:-randomcoin
-                                    
-                                }
-                              
-                            }
-                          );
-                          message.channel.send(`${message.author} You drunk too much! and someone stole from you <:UC:878195863413981214> ${randomcoin}`);
-                        }else{
-                          message.channel.send(`${message.author} You drunk whole jug of beer! and now you are drunk`);
-                        }
-                      }else{
-                        message.channel.send(`${message.author} You drunk whole jug of beer! and now you are drunk`);
-                      }
-                      
-                    }else{
-                      if(userData.partner !== 0){
-                        let partnerid = userData.partner;
-                        let partnerData = await userModel.findOne({userID:partnerid});
-                        if(partnerData.beer >= 1){
-                          const embed =new Discord.MessageEmbed();
-                          embed.setAuthor(`${message.author.username}, You don't have beer so would you like to use your partner ${userData.partnername}'s beer. Use yes or no button to answer!`);
-                          embed.setTimestamp();
-                          const row = new Discord.MessageActionRow()
-                          .addComponents(
-                              new Discord.MessageButton()
-                                  .setCustomId('yes')
-                                  .setLabel('Yes')
-                                  .setStyle('SUCCESS'),
-                              new Discord.MessageButton()
-                                  .setCustomId('no')
-                                  .setLabel('No')
-                                  .setStyle('DANGER')
-                              
-                          );
-                        const m = await message.channel.send({embeds:[embed],components:[row]});
-                          const ifilter = i => i.user.id === message.author.id;
-      
-                          const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
-      
-                          collector.on('collect', async i => {
-                              console.log('hello there' + i.guildId);
-                              if (i.customId === 'yes') {
-                                let d2 = new Date();
-                                let n2 = d2.getTime();
-                                const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                  lastuse:n2
-                                });
-                                const partnerresponse = await userModel.findOneAndUpdate({userID:partnerid},
-                                  {
-                                      $inc:{
-                                          beer:-1
-                                      }
-                                    
-                                  }
-                              );
-                                    let random = Math.floor(Math.random() * 5);
-                                    if(random === 2 || random=== 3 || random=== 4){
-                                      let randomcoin = Math.floor(Math.random()*1000);
-                                      if(userData.wallet >= randomcoin){
-                                      const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                        {
-                                            $inc:{
-                                                wallet:-randomcoin,
-                                                networth:-randomcoin
-                                            }
-                                          
-                                        }
-                                      );
-                                      message.channel.send(`${message.author} You drunk too much! and someone stole from you <:UC:878195863413981214> ${randomcoin}`);
-                                    }else if(userData.bank>= randomcoin){
-                                      const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                        {
-                                            $inc:{
-                                                bank:-randomcoin,
-                                                networth:-randomcoin
-                                                
-                                            }
-                                          
-                                        }
-                                      );
-                                      message.channel.send(`${message.author} You drunk too much! and someone stole from you <:UC:878195863413981214> ${randomcoin}`);
-                                    }else{
-                                      message.channel.send(`${message.author} You drunk whole jug of beer! and now you are drunk`);
-                                    }
-                                  }else{
-                                    message.channel.send(`${message.author} You drunk whole jug of beer! and now you are drunk`);
-                                  }
-                                  await i.update({components:[]});
-                              }else if(i.customId==='no'){
-                                  await i.update({components:[]});
-                              }
-                          });
-      
-                          collector.on('end', collected => console.log(`Collected ${collected.size} items`));
-      
-                        }else{
-                          message.channel.send(`${message.author}, You don't own that item!`);
-                        }
-                      }else{
-                        message.channel.send(`${message.author}, You don't own that item!`);
-                      }
-                    }
+                     use('Beer','🍺','food',1);
                   }
                   if(argsone_name === 'coffee'){
-                    if(userData.coffee>=1){
-                      let d2 = new Date();
-                      let n2 = d2.getTime();
-                      const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                        lastuse:n2
-                      });
-                      const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                        {
-                            $inc:{
-                                coffee:-1,
-                                xp:50
-        
-                            } 
-                          
-                        }
-                      );
-                      message.channel.send(`${message.author}, You drunk coffee and got 50 xp!`);
-                    }else{
-                      if(userData.partner !== 0){
-                        let partnerid = userData.partner;
-                        let partnerData = await userModel.findOne({userID:partnerid});
-                        if(partnerData.coffee >= 1){
-                          const embed =new Discord.MessageEmbed();
-                          embed.setAuthor(`${message.author.username}, You don't have coffee so would you like to use your partner ${userData. partnername}'s coffee. Use yes or no button to answer!`);
-                          embed.setTimestamp();
-                          const row = new Discord.MessageActionRow()
-                          .addComponents(
-                              new Discord.MessageButton()
-                                  .setCustomId('yes')
-                                  .setLabel('Yes')
-                                  .setStyle('SUCCESS'),
-                              new Discord.MessageButton()
-                                  .setCustomId('no')
-                                  .setLabel('No')
-                                  .setStyle('DANGER')
-                              
-                          );
-                        const m = await message.channel.send({embeds:[embed],components:[row]});
-                          const ifilter = i => i.user.id === message.author.id;
-      
-                          const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
-      
-                          collector.on('collect', async i => {
-                              console.log('hello there' + i.guildId);
-                              if (i.customId === 'yes') {
-                                let d2 = new Date();
-                                let n2 = d2.getTime();
-                                const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                  lastuse:n2
-                                });
-                                const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                        {
-                                            $inc:{
-                                                xp:50
-                                            }
-                                          
-                                        }
-                                );
-                                const partnerresponse = await userModel.findOneAndUpdate({userID:partnerid},
-                                  {
-                                      $inc:{
-                                          coffee:-1
-                                      }
-                                    
-                                  }
-                              );
-                              await i.update({components:[]});
-                              message.channel.send(`${message.author}, You drunk coffee and got 50 xp!`);
-                              }else if(i.customId==='no'){
-                                  await i.update({components:[]});
-                              }
-                          });
-      
-                          collector.on('end', collected => console.log(`Collected ${collected.size} items`));
-      
-                        }else{
-                          message.channel.send(`${message.author}, You don't own that item!`);
-                        }
-                      }else{
-                        message.channel.send(`${message.author}, You don't own that item!`);
-                      }
-
-                    }
+                     use('Coffee','☕','food',1);
                   }
                   if(argsone_name === 'pizza' && argstwo_name === 'slice'){
-                    if(userData.pizzaslice >= 1){
-                      let d2 = new Date();
-                      let n2 = d2.getTime();
-                      const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                        lastuse:n2
-                      });
-                      const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                        {
-                            $inc:{
-                                pizzaslice:-1,
-                                xp:4500
-        
-                            } 
-                          
-                        }
-                      );
-                      const embed = new Discord.MessageEmbed();
-                      embed.setAuthor(`${message.author.username}, You ate whole pizza slice!`,message.author.displayAvatarURL());
-                      embed.setDescription(`**You ate whole 🍕 pizza slice and got 4500 xp and increased your daily and monthly amount!**`);
-                      embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                      embed.setTimestamp();
-                      message.channel.send({embeds:[embed]});
-                    }else{
-                      if(userData.partner !== 0){
-                        let partnerid = userData.partner;
-                        let partnerData = await userModel.findOne({userID:partnerid});
-                        if(partnerData.pizzaslice >= 1){
-                          const embed =new Discord.MessageEmbed();
-                          embed.setAuthor(`${message.author.username}, You don't have pizza slice so would you like to use your partner ${userData. partnername}'s pizza slice. Use yes or no button to answer!`);
-                          embed.setTimestamp();
-                          const row = new Discord.MessageActionRow()
-                          .addComponents(
-                              new Discord.MessageButton()
-                                  .setCustomId('yes')
-                                  .setLabel('Yes')
-                                  .setStyle('SUCCESS'),
-                              new Discord.MessageButton()
-                                  .setCustomId('no')
-                                  .setLabel('No')
-                                  .setStyle('DANGER')
-                              
-                          );
-                        const m = await message.channel.send({embeds:[embed],components:[row]});
-                          const ifilter = i => i.user.id === message.author.id;
-      
-                          const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
-      
-                          collector.on('collect', async i => {
-                              console.log('hello there' + i.guildId);
-                              if (i.customId === 'yes') {
-                                let d2 = new Date();
-                                let n2 = d2.getTime();
-                                const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                  lastuse:n2
-                                });
-                                const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                        {
-                                            $inc:{
-                                                xp:50
-                                            }
-                                          
-                                        }
-                                );
-                                const partnerresponse = await userModel.findOneAndUpdate({userID:partnerid},
-                                  {
-                                      $inc:{
-                                          pizzaslice:-1
-                                      }
-                                    
-                                  }
-                              );
-                              await i.update({components:[]});
-                              const embed = new Discord.MessageEmbed();
-                                embed.setAuthor(`${message.author.username}, You ate whole pizza slice!`,message.author.displayAvatarURL());
-                                embed.setDescription(`**You ate whole 🍕 pizza slice and got 4500 xp and increased your daily and monthly amount!**`);
-                                embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                                embed.setTimestamp();
-                                message.channel.send({embeds:[embed]});
-                            
-                              }else if(i.customId==='no'){
-                                  await i.update({components:[]});
-                              }
-                          });
-      
-                          collector.on('end', collected => console.log(`Collected ${collected.size} items`));
-      
-                        }else{
-                          message.channel.send(`${message.author}, You don't own that item!`);
-                        }
-                      }else{
-                        message.channel.send(`${message.author}, You don't own that item!`);
-                      }
-      
-                    }
+                    use('Pizza Slice','🍕','food',1);
                   }
                   if(argsone_name === 'green' && argstwo_name === 'apple'){
-                    if(userData.greenapple >= 1){
-                      let d2 = new Date();
-                      let n2 = d2.getTime();
-                      const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                        lastuse:n2
-                      });
-                      const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                        {
-                            $inc:{
-                                greenapple:-1,
-                                xp:750
-        
-                            } 
-                          
-                        }
-                      );
-                      const embed = new Discord.MessageEmbed();
-                      embed.setAuthor(`${message.author.username}, You ate green apple!`,message.author.displayAvatarURL());
-                      embed.setDescription(`**You ate whole 🍏 green apple and got 750 xp**`);
-                      embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                      embed.setTimestamp();
-                      message.channel.send({embeds:[embed]});
-                    }else{
-                      if(userData.partner !== 0){
-                        let partnerid = userData.partner;
-                        let partnerData = await userModel.findOne({userID:partnerid});
-                        if(partnerData.greenapple >= 1){
-                          const embed =new Discord.MessageEmbed();
-                          embed.setAuthor(`${message.author.username}, You don't have green apple so would you like to use your partner ${userData. partnername}'s green apple. Use yes or no button to answer!`);
-                          embed.setTimestamp();
-                          const row = new Discord.MessageActionRow()
-                          .addComponents(
-                              new Discord.MessageButton()
-                                  .setCustomId('yes')
-                                  .setLabel('Yes')
-                                  .setStyle('SUCCESS'),
-                              new Discord.MessageButton()
-                                  .setCustomId('no')
-                                  .setLabel('No')
-                                  .setStyle('DANGER')
-                              
-                          );
-                        const m = await message.channel.send({embeds:[embed],components:[row]});
-                          const ifilter = i => i.user.id === message.author.id;
-      
-                          const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
-      
-                          collector.on('collect', async i => {
-                              console.log('hello there' + i.guildId);
-                              if (i.customId === 'yes') {
-                                let d2 = new Date();
-                                let n2 = d2.getTime();
-                                const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                  lastuse:n2
-                                });
-                                const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                        {
-                                            $inc:{
-                                              
-                                                xp:1500
-                                            }
-                                          
-                                        }
-                                );
-                                const partnerresponse = await userModel.findOneAndUpdate({userID:partnerid},
-                                  {
-                                      $inc:{
-                                        greenapple:-1
-                                      }
-                                    
-                                  }
-                              );
-                              await i.update({components:[]});
-                              const embed = new Discord.MessageEmbed();
-                              embed.setAuthor(`${message.author.username}, You ate green apple!`,message.author.displayAvatarURL());
-                              embed.setDescription(`**You ate whole 🍏 green apple and got 1500 xp**`);
-                              embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                              embed.setTimestamp();
-                              message.channel.send({embeds:[embed]});
-                            
-                              }else if(i.customId==='no'){
-                                  await i.update({components:[]});
-                              }
-                          });
-      
-                          collector.on('end', collected => console.log(`Collected ${collected.size} items`));
-      
-                        }else{
-                          message.channel.send(`${message.author}, You don't own that item!`);
-                        }
-                      }else{
-                        message.channel.send(`${message.author}, You don't own that item!`);
-                      }
-      
-                    }
+                    use('Green Apple','🍏','food',1);
                   }
                   if(argsone_name === 'bubble' && argstwo_name === 'tea'){
-                    if(userData.bubbletea >= 1){
-                      let d2 = new Date();
-                      let n2 = d2.getTime();
-                      const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                        lastuse:n2
-                      });
-                      const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                        {
-                            $inc:{
-                                bubbletea:-1,
-                                xp:50
-        
-                            } 
-                          
-                        }
-                      );
-                      const embed = new Discord.MessageEmbed();
-                      embed.setAuthor(`${message.author.username}, You drunk 🧋 bubble tea!`,message.author.displayAvatarURL());
-                      embed.setDescription(`**You drunk whole 🧋 bubble tea and got 50 xp**`);
-                      embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                      embed.setTimestamp();
-                      message.channel.send({embeds:[embed]});
-                    }else{
-                      if(userData.partner !== 0){
-                        let partnerid = userData.partner;
-                        let partnerData = await userModel.findOne({userID:partnerid});
-                        if(partnerData.bubbletea >= 1){
-                          const embed =new Discord.MessageEmbed();
-                          embed.setAuthor(`${message.author.username}, You don't have bubble tea so would you like to use your partner ${userData. partnername}'s bubble tea. Use yes or no button to answer!`);
-                          embed.setTimestamp();
-                          const row = new Discord.MessageActionRow()
-                          .addComponents(
-                              new Discord.MessageButton()
-                                  .setCustomId('yes')
-                                  .setLabel('Yes')
-                                  .setStyle('SUCCESS'),
-                              new Discord.MessageButton()
-                                  .setCustomId('no')
-                                  .setLabel('No')
-                                  .setStyle('DANGER')
-                              
-                          );
-                        const m = await message.channel.send({embeds:[embed],components:[row]});
-                          const ifilter = i => i.user.id === message.author.id;
-      
-                          const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
-      
-                          collector.on('collect', async i => {
-                              console.log('hello there' + i.guildId);
-                              if (i.customId === 'yes') {
-                                let d2 = new Date();
-                                let n2 = d2.getTime();
-                                const newuse = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                  lastuse:n2
-                                });
-                                const response2 = await userModel.findOneAndUpdate({userID:message.author.id},
-                                        {
-                                            $inc:{
-                                              
-                                                xp:50
-                                            }
-                                          
-                                        }
-                                );
-                                const partnerresponse = await userModel.findOneAndUpdate({userID:partnerid},
-                                  {
-                                      $inc:{
-                                        bubbletea:-1
-                                      }
-                                    
-                                  }
-                              );
-                              await i.update({components:[]});
-                              const embed = new Discord.MessageEmbed();
-                              embed.setAuthor(`${message.author.username}, You drunk 🧋 bubble tea!`,message.author.displayAvatarURL());
-                              embed.setDescription(`**You ate whole 🧋 bubble tea and got 50 xp**`);
-                              embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-                              embed.setTimestamp();
-                              message.channel.send({embeds:[embed]});
-                            
-                              }else if(i.customId==='no'){
-                                  await i.update({components:[]});
+                    use('Bubble Tea','🧋','food',1);
+                  }
+                  if(argsone_name === 'credit' && argstwo_name === 'points' || argsone_name === 'credit' && argstwo_name === 'point'){
+                    if(argsthree_name){
+                      if(!isNaN(argsthree_name) && Math.sign(argsthree_name) === 1){
+                        if(argsthree_name % 1=== 0){  
+                           if(userData.creditpoints >= argsthree_name){
+                              const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                $inc:{
+                                  banklimit:parseInt(argsthree_name),
+                                  creditpoints:-parseInt(argsthree_name)
+                                }
+                              });
+                              let banklimit;
+                              if(userData.banklimit){
+                                banklimit = userData.banklimit;
+                              }else{
+                                banklimit = 0;
                               }
-                          });
-      
-                          collector.on('end', collected => console.log(`Collected ${collected.size} items`));
-      
+                              let bankspace = userData.level * 10000;
+                              const embed2 = new Discord.MessageEmbed();
+                              embed2.setTitle(`<:creditpoint:925956240209772564> Credit Points used!`);
+                              embed2.setDescription(`You have successfully used **${argsthree_name} <:creditpoint:925956240209772564> Credit Points and your bank limit has been increased to ${bankspace+ banklimit + argsthree_name}**`);
+                              embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                              embed2.setColor(`#30CC71`);
+                              embed2.setTimestamp();
+                              message.channel.send({embeds:[embed2]});
+                           }else{
+                             const embed = new Discord.MessageEmbed();
+                             embed.setTitle(`${message.author.username}, You don't have ${argsthree_name} credit points to use!`);
+                             message.channel.send({embeds:[embed]});
+                           }
                         }else{
-                          message.channel.send(`${message.author}, You don't own that item!`);
+                          const embed = new Discord.MessageEmbed();
+                          embed.setTitle(`${message.author.username}, Please enter a valid number!`);
+                          message.channel.send({embeds:[embed]});
                         }
                       }else{
-                        message.channel.send(`${message.author}, You don't own that item!`);
+                        const embed = new Discord.MessageEmbed();
+                        embed.setTitle(`${message.author.username}, Please enter a valid number!`);
+                        message.channel.send({embeds:[embed]});
                       }
-      
+                    }else{
+                      if(userData.creditpoints >= 1){
+                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                          $inc:{
+                            banklimit:1,
+                            creditpoints:-1
+                          }
+                        });
+                        let banklimit;
+                        if(userData.banklimit){
+                          banklimit = userData.banklimit;
+                        }else{
+                          banklimit = 0;
+                        }
+                        const embed2 = new Discord.MessageEmbed();
+                        embed2.setTitle(`<:creditpoint:925956240209772564> Credit Points used!`);
+                        embed2.setDescription(`You have successfully used **1 <:creditpoint:925956240209772564> Credit Points and your bank limit has been increased to ${userData.level * 10000 + banklimit + 1}**`);
+                        embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                        embed2.setColor(`#30CC71`);
+                        embed2.setTimestamp();
+                        message.channel.send({embeds:[embed2]});
+                      }else{
+                        const embed = new Discord.MessageEmbed();
+                        embed.setTitle(`${message.author.username}, You don't have 1 credit points to use!`);
+                        message.channel.send({embeds:[embed]});
+                      }
                     }
                   }
               }else{
                 var msec = n - lastuse;
                 console.log(msec);
                 var ss = Math.floor(msec / 1000);
-                var second = 5 - ss;
-                const embed = new Discord.MessageEmbed();
-                embed.setTitle(`Wait bro!`);
-                embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use that item again!. The default cooldown is of **5** seconds but for premium users it is of **3** seconds to become a premium user use premium command.`);
-                message.channel.send({embeds:[embed]});
+                var second = timeup2 - ss;
+                if(userData.premium !== 'enable'){
+                    const embed = new Discord.MessageEmbed();
+                    embed.setTitle(`Wait bro!`);
+                    embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use that item again!. The default cooldown is of **5** seconds but for premium users it is of **3** seconds to become a premium user use premium command.`);
+                    message.channel.send({embeds:[embed]});
+                }else{
+                  const embed = new Discord.MessageEmbed();
+                  embed.setTitle(`Chill bro!`);
+                  embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use that item again!.`);
+                  embed.setColor('#025CFF');
+                  message.channel.send({embeds:[embed]});
+                }
               }
       
             }else{
@@ -692,7 +458,8 @@ module.exports={
                 message.channel.send({embeds:[embed]});
             }
         }else{
-           message.channel.send(`${target}, You are not registered to the game. Please use join command to join the game.`);
+          message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+
         }
     }
 }

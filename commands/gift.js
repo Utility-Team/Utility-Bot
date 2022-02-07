@@ -1,10 +1,13 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
 const botModel = require('../models/botSchema');
+const serverModel = require('../models/profileSchema');
 module.exports={
     name:'gift',
+    aliases:['gift','share'],
     async execute(message,args){
         let userData = await userModel.findOne({userID:message.author.id});
+        let serverData = await serverModel.findOne({guildID:message.guild.id});
         const target = message.mentions.users.first();
         let argsone;
         let argsone_name;
@@ -53,456 +56,498 @@ module.exports={
                      
                      );
                   }
+            }
+            async function check_Rewards(achievement,reward1,badge,power){
+                    if(userData.rewards && userData.badges){
+                        if(userData.rewards.length>0){
+                            let check = 0;
+                            for(var x = 0;x<=userData.rewards.length;x++){
+                                if(userData.rewards[x]){
+                                    if(userData.rewards[x].name === achievement){
+                                        check = 5;
+                                        console.log('it already exists');
+                                        return;
+                                    }
+                                    if(x === userData.rewards.length && check <5){
+                                        const embed = new Discord.MessageEmbed();
+                                        embed.setTitle(`🎉 Unlocked New Achievement!`);
+                                        embed.setDescription(`You have unlocked **${achievement} achievement** and your rewards are **${reward1} & ${badge}**`);
+                                        embed.setTimestamp();
+                                        message.channel.send({embeds:[embed]});
+                                        let rewardsbadge = userData.rewards;
+                                        let badgeData = userData.badges;
+                                        let newrewardsData = {
+                                            name:achievement,
+                                            reward:reward1,
+                                            badge:badge,
+                                            category:'Donation'
+                                        }
+                                        let newbadgeData = {
+                                            name:achievement,
+                                            badge:badge,
+                                            power:power,
+                                            category:'Donation'
+                                        }
+                                        rewardsbadge.push(newrewardsData);
+                                        badgeData.push(newbadgeData);
+                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                            $inc:{
+                                                xp:reward1
+                                            },
+                                            rewards:rewardsbadge,
+                                            badges:badgeData
+                                        });
+                                    }
+                                }else{
+                                    const embed = new Discord.MessageEmbed();
+                                    embed.setTitle(`🎉 Unlocked New Achievement!`);
+                                    embed.setDescription(`You have unlocked **${achievement} achievement** and your rewards are **${reward1} & ${badge}**`);
+                                    embed.setTimestamp();
+                                    message.channel.send({embeds:[embed]});
+                                    let rewardsbadge = userData.rewards;
+                                    let badgeData = userData.badges;
+                                    let newrewardsData = {
+                                        name:achievement,
+                                        reward:reward1,
+                                        badge:badge,
+                                        category:'Donation'
+                                    }
+                                    let newbadgeData = {
+                                        name:achievement,
+                                        badge:badge,
+                                        power:power,
+                                        category:'Donation'
+                                    }
+                                    rewardsbadge.push(newrewardsData);
+                                    badgeData.push(newbadgeData);
+                                    const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                        $inc:{
+                                            xp:reward1
+                                        },
+                                        rewards:rewardsbadge,
+                                        badges:badgeData
+                                    });
+                                    return;
+                                }
+                                
+                            }
+                        }else{
+                            const embed = new Discord.MessageEmbed();
+                                    embed.setTitle(`🎉 Unlocked New Achievement!`);
+                                    embed.setDescription(`You have unlocked **${achievement} achievement** and your rewards are **${reward1} & ${badge}**`);
+                                    embed.setTimestamp();
+                                    message.channel.send({embeds:[embed]});
+                                    let rewardsbadge = [];
+                                    let badgeData = []
+                                    let newrewardsData = {
+                                        name:achievement,
+                                        reward:reward1,
+                                        badge:badge,
+                                        category:'Donation'
+                                    }
+                                    let newbadgeData = {
+                                        name:achievement,
+                                        badge:badge,
+                                        power:power,
+                                        category:'Donation'
+                                    }
+                                    rewardsbadge.push(newrewardsData);
+                                    badgeData.push(newbadgeData);
+                                    const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                        $inc:{
+                                            xp:reward1
+                                        },
+                                        rewards:rewardsbadge,
+                                        badges:badgeData
+                                    });
+                        }
+                    }
+            }
+            async function sendGift(targetData,item,emoji,quantity,category){
+                let check = 0;
+                for(var x = 0;x<= targetData.inventory.length;x++){
+                    if(targetData.inventory[x]){
+                        if(targetData.inventory[x].name === item){
+                            if(item === targetData.inventory[x].name && check<5){
+                                check = 5;
+                                let inventoryData = targetData.inventory;
+                                inventoryData[x].quantity = parseInt(inventoryData[x].quantity) + parseInt(quantity);
+                                const response = await userModel.findOneAndUpdate({userID:targetData.userID},
+                                {
+                                    inventory:inventoryData
+                                }    
+                                );      
+                                return;
+                            }
+                        }
+                        if(x === targetData.inventory.length -1 && check<5){
+                            check = 10;
+                            let inventoryData = targetData.inventory;
+                            let newData = {
+                                name:item,
+                                emoji:emoji,
+                                quantity:quantity,
+                                category:category
+                            }
+                            inventoryData.push(newData);
+                            const response = await userModel.findOneAndUpdate({userID:targetData.userID},{
+                                inventory:inventoryData
+                            });
+                        }
+                    }else if(targetData.inventory.length === 0){
+                        let inventoryData = targetData.inventory;
+                        let newData = {
+                            name:item,
+                            emoji:emoji,
+                            quantity:quantity,
+                            category:category
+                        }
+                        inventoryData.push(newData);
+                        const response = await userModel.findOneAndUpdate({userID:targetData.userID},{
+                            inventory:inventoryData
+                        });
+                    }
                 }
+            }
+            async function gift(targetData,item,emoji,quantity,category){
+                    let check = 0;
+                    if(userData.inventory){
+                        for(var x = 0;x<=userData.inventory.length;x++){
+                            if(userData.inventory[x]){
+                                if(userData.inventory[x].name === item){
+                                    if(userData.inventory[x].quantity >= parseInt(quantity)){
+                                        if(item === userData.inventory[x].name && check < 5){
+                                            let d = new Date();
+                                            let n = d.getTime();
+                                            let lastgift;
+                                            if(userData.lastgift){
+                                                lastgift = userData.lastgift;
+                                            }else{
+                                                lastgift = 0;
+                                            }
+                                            let timeup;
+                                            let timeup2;
+                                            if(userData.premium === 'enable'){
+                                                timeup = 3000;
+                                                timeup2 = 3;
+                                            }else{  
+                                                timeup = 5000;
+                                                timeup2 = 5;
+                                            }
+                                            if(n - lastgift>= timeup){
+                                                    if(targetData.inventory){
+                                                        console.log('target Data exist');
+                                                        const embed2 = new Discord.MessageEmbed();
+                                                        embed2.setTitle(`✅ Successfully Gifted`);
+                                                        embed2.setColor(`#30CC71`);
+                                                        embed2.setDescription(`${message.author}, You have successfully gifted ${quantity} ${emoji} ${item} to ${target}`);
+                                                        embed2.setTimestamp();
+                                                        message.channel.send({embeds:[embed2]});
+                                                        check = 5;
+                                                        let inventoryData = userData.inventory;
+                                                        if(inventoryData[x].quantity>quantity){
+                                                            console.log('it really came here haha');
+                                                            inventoryData[x].quantity -=  parseInt(quantity);
+                                                            console.log('new quantity = ' + inventoryData[x]);
+                                                        }else{
+                                                            console.log('it really came here haha 2');
+                                                            inventoryData.splice(x,1);
+                                                            console.log(inventoryData);
+                                                        }
+                                                        let totalitemsdonated = userData.totalitemsdonated;
+                                                        totalitemsdonated = parseInt(totalitemsdonated) + parseInt(quantity);
+                                                        let d2 = new Date();
+                                                        let n2 = d2.getTime();
+                                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},
+                                                        {
+                                                            inventory:inventoryData,
+                                                            totalitemsdonated:totalitemsdonated,
+                                                            lastgift:n2
+                                                        }    
+                                                        );
+                                                        console.log('it came here');
+                                                        console.log("target Data"+ targetData.inventory);
+                                                        sendGift(targetData,item,emoji,quantity,category);
+                                                        if(userData.totalitemsdonated + quantity>=10){
+                                                            console.log('here 1');
+                                                            check_Rewards('Donation of 10 Items','500 xp!','<:commonitemssharingbadge:925708875750080562>',1);
+                                                        }
+                                                        if(userData.totalitemsdonated + quantity>=10){
+                                                            console.log('here 1');
+                                                            check_Rewards('Donation of 50 Items','1000 xp!','<:50itemssharingbadge:925713392591835136>',2);
+                                                            
+                                                        }
+                                                        if(userData.totalitemsdonated + quantity>=100){
+                                                            console.log('here 1');
+                                                            check_Rewards('Donation of 100 Items','1500 xp!','<:100itemssharingbadge:925728246174208000>',4);
+                                                        }
+                                                        return;
+                                                    
+                                                    }else{
+                                                        const embed2 = new Discord.MessageEmbed();
+                                                        embed2.setTitle(`✅ Successfully Gifted`);
+                                                        embed2.setColor(`#30CC71`);
+                                                        embed2.setDescription(`${message.author}, You have successfully gifted ${quantity} ${emoji} ${item} to ${target}`);
+                                                        embed2.setTimestamp();
+                                                        message.channel.send({embeds:[embed2]});
+                                                        check = 5;
+                                                        let inventoryData = userData.inventory;
+                                                        if(inventoryData[x].quantity>quantity){
+                                                            inventoryData[x].quantity = parseInt(inventoryData[x].quantity) - parseInt(quantity);
+                                                        }else if(inventoryData[x].quantity === quantity){
+                                                            inventoryData.splice(x,1);
+                                                        }
+                                                        let totalitemsdonated = userData.totalitemsdonated;
+                                                        totalitemsdonated = parseInt(totalitemsdonated) + parseInt(quantity);
+                                                        let d2 = new Date();
+                                                        let n2 = d2.getTime();
+                                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},
+                                                        {
+                                                            inventory:inventoryData,
+                                                            totalitemsdonated:totalitemsdonated,
+                                                            lastgift:n2
+                                                        }    
+                                                        );
+                                                        let inventory = [];
+                                                        let newData = {
+                                                            item:item,
+                                                            emoji:emoji,
+                                                            quantity:parseInt(quantity),
+                                                            category:category
+                                                        };
+                                                        inventory.push(newData);
+                                                        console.log('new Data' + newData);
+                                                        if(userData.totalitemsdonated + quantity>=10){
+                                                            console.log('here 1');
+                                                            check_Rewards('Donation of 10 Items','500 xp!','<:commonitemssharingbadge:925708875750080562>',1);
+                                                            
+                                                        }
+                                                        if(userData.totalitemsdonated + quantity>=50){
+                                                            console.log('here 1');
+                                                            check_Rewards('Donation of 50 Items','1000 xp!','<:50itemssharingbadge:925713392591835136>',2);
+                                                        }
+                                                        if(userData.totalitemsdonated + quantity>=100){
+                                                            console.log('here 1');
+                                                            check_Rewards('Donation of 100 Items','1500 xp!','<:100itemssharingbadge:925728246174208000>',4);
+                                                        }
+
+
+                                                        const response2 = await userModel.findOneAndUpdate({userID:targetData.userID},{
+                                                            inventory:inventory
+                                                        });
+                                                        
+                                                        return;
+                                                    }
+                                                }else{
+                                                    var msec = n - lastgift;
+                                                    console.log(msec);
+                                                    var ss = Math.floor(msec / 1000);
+                                                    var second = timeup2 - ss;
+                                                    if(userData.premium !== 'enable'){
+                                                        const embed = new Discord.MessageEmbed();
+                                                        embed.setTitle(`Wait bro!`);
+                                                        embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use gift again!. The default cooldown is of **5** seconds but for premium users it is of **3** seconds to become a premium user use premium command.`);
+                                                        message.channel.send({embeds:[embed]});
+                                                        return;
+                                                    }else{
+                                                        const embed = new Discord.MessageEmbed();
+                                                        embed.setTitle(`Chill bro!`);
+                                                        embed.setDescription(`You are in a cooldown. Please wait for ${second} seconds to use gift again!.`);
+                                                        embed.setColor('#025CFF');
+                                                        message.channel.send({embeds:[embed]});
+                                                        return;
+                                                    }
+                                                }
+
+                                        }
+                                    }else{
+                                        message.channel.send(`${message.author}, You don't have that many ${userData.inventory[x].name} to gift`);
+                                        return;
+                                    }
+                                }
+                            }else if(x === userData.inventory.length & check < 5){
+                                message.channel.send(`${message.author}, You don't own that item to gift`);
+                            }
+                        }         
+                    }else{
+                        message.channel.send(`${message.author}, You don't own that item to gift`);
+                    }
+            }
             if(target){
               let targetData = await userModel.findOne({userID:target.id});
               if(targetData){
-                 if(argsone_name === 'beer'){
+                if(argsone_name === 'beer'){
                     let number = args[2];
-                    let price = args[3];
-               
-                                    if(number){
-                                        if(!isNaN(number) && Math.sign(number) === 1){
-                                        if(number % 1=== 0){
-                                            if(userData.beer >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        beer:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        beer:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} :beer: beer to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} beer to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                    }else{
-                                        if(userData.beer >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    beer:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    beer:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 :beer: beer to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 beer to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
-                                    }
+                    let price = args[3];  
+                    if(number){
+                        if(!isNaN(number) && Math.sign(number) === 1){
+                            if(number % 1=== 0){
+                                gift(targetData,'Beer','🍺',number,'food');  
+                            }else{
+                                const embed = new Discord.MessageEmbed();
+                                embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                                message.channel.send({embeds:[embed]});
+                            }
+                        }else{
+                            const embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                            message.channel.send({embeds:[embed]});
+                        }
+                    }else{
+                        gift(targetData,'Beer','🍺',1,'food');
+                                        
+                    }
                      
-                 }else if(argsone_name === 'coffee'){
-                    let number = args[2];
-               
-                                    if(number){
-                                        if(!isNaN(number) && Math.sign(number) === 1){
-                                        if(number % 1=== 0){
-                                            if(userData.coffee >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        coffee:-number
-                                                    }
-                                                });
+                }else if(argsone_name === 'coffee'){
+                    let number = args[2];             
+                    if(number){
+                        if(!isNaN(number) && Math.sign(number) === 1){
+                            if(number % 1=== 0){
+                                gift(targetData,'Coffee','☕',number,'food');
+                                            
+                            }else{
+                                const embed = new Discord.MessageEmbed();
+                                embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                                message.channel.send({embeds:[embed]});
+                            }
+                        }else{
+                            const embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                            message.channel.send({embeds:[embed]});
+                        }
+                    }else{
+                        gift(targetData,'Coffee','☕',1,'food');
 
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        coffee:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} :coffee: coffee to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} coffee to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                    }else{
-                                        if(userData.coffee >=1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    coffee:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    coffee:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 :coffee: coffee to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 coffee to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
-
-                                    }            
-                 }if(argsone_name === 'pizza' && argstwo_name === 'slice'){
-                    let number = args[3];
-               
-                                    if(number){
-                                        if(!isNaN(number) && Math.sign(number) === 1){
-                                        if(number % 1=== 0){
-                                            if(userData.pizzaslice >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        pizzaslice:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        pizzaslice:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} 🍕 pizza slice to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} pizza slice to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                    }else{
-                                        if(userData.pizzaslice >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    pizzaslice:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    pizzaslice:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 🍕 pizza slice to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 pizza slice to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
-                                    }
+                    }            
+                }else if(argsone_name === 'pizza' && argstwo_name === 'slice'){
+                    let number = args[3];              
+                    if(number){ 
+                        if(!isNaN(number) && Math.sign(number) === 1){
+                            if(number % 1=== 0){
+                                gift(targetData,'Pizza Slice','🍕',number,'food');
+                            }else{
+                                const embed = new Discord.MessageEmbed();
+                                embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                                message.channel.send({embeds:[embed]});
+                            }
+                        }else{
+                            const embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                            message.channel.send({embeds:[embed]});
+                        }
+                    }else{
+                        gift(targetData,'Pizza Slice','🍕',1,'food');     
+                    }
                    
                      
-                 }if(argsone_name === 'green' && argstwo_name === 'apple'){
+                }else if(argsone_name === 'green' && argstwo_name === 'apple'){
+                    let number = args[3];
+                    if(number){
+                        if(!isNaN(number) && Math.sign(number) === 1){
+                            if(number % 1=== 0){
+                                gift(targetData,'Green Apple','🍏',number,'food');         
+                            }else{
+                                const embed = new Discord.MessageEmbed();
+                                embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                                message.channel.send({embeds:[embed]});
+                            }
+                        }else{
+                            const embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                            message.channel.send({embeds:[embed]});
+                        }
+                    }else{
+                        gift(targetData,'Green Apple','🍏',1,'food');         
+                    }                        
+                }else if(argsone_name === 'lock'){
                     let number = args[2];
-                                    if(number){
-                                        if(!isNaN(number) && Math.sign(number) === 1){
-                                        if(number % 1=== 0){
-                                            if(userData.greenapple >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        greenapple:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        greenapple:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} 🍏 green apple to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} green apple to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
+                    if(number){
+                        if(!isNaN(number) && Math.sign(number) === 1){
+                            if(number % 1=== 0){
+                                if(userData.lock>=number){
+                                    const embed2 = new Discord.MessageEmbed();
+                                    embed2.setTitle(`✅ Successfully Gifted`);
+                                    embed2.setColor(`#30CC71`);
+                                    embed2.setDescription(`${message.author}, You have successfully gifted 🔒 **${number}** lock`);
+                                    embed2.setTimestamp();
+                                    message.channel.send({embeds:[embed2]});
+                                    const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                        $inc:{
+                                            lock:-number
                                         }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                    }else{
-                                        if(userData.greenapple >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    greenapple:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    greenapple:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 🍏 green apple to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 green apple to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
-
-                                    }
-                                      
-                 }if(argsone_name === 'lock'){
-                    let number = args[2];
-                 
-                                    if(number){
-                                        if(!isNaN(number) && Math.sign(number) === 1){
-                                        if(number % 1=== 0){
-                                            if(userData.lock >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        lock:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        lock:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} :lock: lock to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} lock to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                    }else{
-                                        if(userData.lock >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    lock:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    lock:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 :lock: lock to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 lock to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
-                                    }
+                                     });
+                                     const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                         $inc:{
+                                             lock:number
+                                         }
+                                     });
+                                    
+                                }else{
+                                    message.channel.send(`${message.author}, you don't have that many lock to gift`);
+                                }
+                            }else{
+                                const embed = new Discord.MessageEmbed();
+                                embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                                message.channel.send({embeds:[embed]});
+                            }
+                        }else{
+                            const embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                            message.channel.send({embeds:[embed]});
+                        }
+                    }else{
+                        if(userData.lock>=1){
+                            const embed2 = new Discord.MessageEmbed();
+                            embed2.setTitle(`✅ Successfully Gifted`);
+                            embed2.setColor(`#30CC71`);
+                            embed2.setDescription(`${message.author}, You have successfully gifted 🔒 **1** lock`);
+                            embed2.setTimestamp();
+                            message.channel.send({embeds:[embed2]});
+                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                $inc:{
+                                    lock:-1
+                                }
+                             });
+                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                 $inc:{
+                                     lock:1
+                                 }
+                             });
+                            
+                        }else{
+                            message.channel.send(`${message.author}, you don't have that many lock to gift`);
+                        }
+                    }
                     
                      
-                 }if(argsone_name === 'key'){
+                }else if(argsone_name === 'key'){
                     let number = args[2];
-                  
-               
-                                    if(number){
-                                        if(!isNaN(number) && Math.sign(number) === 1){
-                                        if(number % 1=== 0){
-                                            if(userData.key >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        key:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        key:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} :key: key to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} key to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
-                                            message.channel.send({embeds:[embed]});
-                                        }
-                                    }else{
-                                        if(userData.key >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    key:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    key:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 :key: key to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 key to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
-
-                                    }
-                                    
-                   
-                     
-                 }if(argsone_name === 'gold' && argstwo_name === 'trophy'){
+                    if(number){
+                        if(!isNaN(number) && Math.sign(number) === 1){
+                            if(number % 1=== 0){
+                                gift(targetData,'Key','🔑',number,'jewellery');
+                            }else{
+                                const embed = new Discord.MessageEmbed();
+                                embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                                message.channel.send({embeds:[embed]});
+                            }
+                        }else{
+                            const embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                            message.channel.send({embeds:[embed]});
+                        }
+                    }else{
+                        gift(targetData,'Key','🔑',1,'jewellery');
+                    }
+                        
+                }if(argsone_name === 'gold' && argstwo_name === 'trophy'){
                     let number = args[3];
               
                                     if(number){
                                         if(!isNaN(number) && Math.sign(number) === 1){
                                         if(number % 1=== 0){
-                                            if(userData.goldtrophy >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        goldtrophy:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        goldtrophy:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} 🏆 gold trophy to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} gold trophy to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
+                                            gift(targetData,'Gold Trophy','🏆',number,'jewellery');
+                                            
                                         }else{
                                             const embed = new Discord.MessageEmbed();
                                             embed.setTitle(`${message.author.username}, Please mention a valid number!`);
@@ -514,30 +559,7 @@ module.exports={
                                             message.channel.send({embeds:[embed]});
                                         }
                                     }else{
-                                        if(userData.goldtrophy >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    goldtrophy:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    goldtrophy:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 🏆 gold trophy to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 gold trophy to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
+                                        gift(targetData,'Gold Trophy','🏆',1,'jewellery');
                                     }
                                        
                  }if(argsone_name === 'gold' && argstwo_name === 'medal'){
@@ -547,31 +569,7 @@ module.exports={
                                     if(number){
                                         if(!isNaN(number) && Math.sign(number) === 1){
                                         if(number % 1=== 0){
-                                            if(userData.goldmedal >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        goldmedal:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        goldmedal:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} 🥇 gold medal to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} gold medal to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }   
+                                            gift(targetData,'Gold Medal','🥇',number,'jewellery');
                                         }else{
                                             const embed = new Discord.MessageEmbed();
                                             embed.setTitle(`${message.author.username}, Please mention a valid number!`);
@@ -583,31 +581,8 @@ module.exports={
                                             message.channel.send({embeds:[embed]});
                                         }
                                     }else{
-                                        if(userData.goldmedal >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    goldmedal:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    goldmedal:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 🥇 gold medal to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 gold medal to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
-
+                                        gift(targetData,'Gold Medal','🥇',1,'jewellery');
+                                       
                                     }
                     
                      
@@ -618,31 +593,8 @@ module.exports={
                                     if(number){
                                         if(!isNaN(number) && Math.sign(number) === 1){
                                         if(number % 1=== 0){
-                                            if(userData.silvermedal >= number){
-                                                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        silvermedal:-number
-                                                    }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        silvermedal:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} 🥈 silver medal to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
-                                            }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} silver medal to gift`);
-                                                message.channel.send({embeds : [embed]});
-                                            }
+                                            gift(targetData,'Silver Medal','🥈',number,'jewellery');
+                                            
                                         }else{
                                             const embed = new Discord.MessageEmbed();
                                             embed.setTitle(`${message.author.username}, Please mention a valid number!`);
@@ -654,30 +606,8 @@ module.exports={
                                             message.channel.send({embeds:[embed]});
                                         }
                                     }else{
-                                        if(userData.silvermedal >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    silvermedal:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    silvermedal:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 🥈 silver medal to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 silver medal to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
+                                        gift(targetData,'Silver Medal','🥈',1,'jewellery');
+                                        
 
                                     }
                    
@@ -688,31 +618,28 @@ module.exports={
                                     if(number){
                                         if(!isNaN(number) && Math.sign(number) === 1){
                                         if(number % 1=== 0){
-                                            if(userData.huntingrifle >= number){
+                                            if(userData.huntingrifle>=number){
+                                                const embed2 = new Discord.MessageEmbed();
+                                                embed2.setTitle(`✅ Successfully Gifted`);
+                                                embed2.setColor(`#30CC71`);
+                                                embed2.setDescription(`${message.author}, You have successfully gifted <:rifle:883578413888184350> **${number}** hunting rifle`);
+                                                embed2.setTimestamp();
+                                                message.channel.send({embeds:[embed2]});
                                                 const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                                     $inc:{
                                                         huntingrifle:-number
                                                     }
-                                                });
-
-                                                const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                    $inc:{
-                                                        huntingrifle:number
-                                                    }
-                                                });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} <:rifle:883578413888184350> hunting rifle to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
+                                                 });
+                                                 const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                                     $inc:{
+                                                         huntingrifle:number
+                                                     }
+                                                 });
+                                                
                                             }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} hunting rifle to gift`);
-                                                message.channel.send({embeds : [embed]});
+                                                message.channel.send(`${message.author}, you don't have that many hunting rifle to gift`);
                                             }
+                                          
                                         }else{
                                             const embed = new Discord.MessageEmbed();
                                             embed.setTitle(`${message.author.username}, Please mention a valid number!`);
@@ -724,30 +651,28 @@ module.exports={
                                             message.channel.send({embeds:[embed]});
                                         }
                                     }else{
-                                        if(userData.huntingrifle >= 1){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    huntingrifle:-1
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    huntingrifle:1
-                                                }
-                                            });
-
+                                        if(userData.huntingrifle>=1){
                                             const embed2 = new Discord.MessageEmbed();
                                             embed2.setTitle(`✅ Successfully Gifted`);
                                             embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 <:rifle:883578413888184350> hunting rifle to ${target}`);
+                                            embed2.setDescription(`${message.author}, You have successfully gifted <:rifle:883578413888184350> **1** hunting rifle`);
                                             embed2.setTimestamp();
                                             message.channel.send({embeds:[embed2]});
+                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                                $inc:{
+                                                    huntingrifle:-number
+                                                }
+                                             });
+                                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                                 $inc:{
+                                                     huntingrifle:number
+                                                 }
+                                             });
                                         }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 hunting rifle  to gift`);
-                                            message.channel.send({embeds : [embed]});
+                                            message.channel.send(`${message.author}, you don't have a hunting rifle to gift`);
+
                                         }
+                                            
 
                                     }
                                           
@@ -758,31 +683,27 @@ module.exports={
                                     if(number){
                                         if(!isNaN(number) && Math.sign(number) === 1){
                                         if(number % 1=== 0){
-                                            if(userData.fishingrod >= number){
+                                            if(userData.fishingrod>= number){
+                                                const embed2 = new Discord.MessageEmbed();
+                                                embed2.setTitle(`✅ Successfully Gifted`);
+                                                embed2.setColor(`#30CC71`);
+                                                embed2.setDescription(`${message.author}, You have successfully gifted 🎣 **${number}** Fishing Rod`);
+                                                embed2.setTimestamp();
+                                                message.channel.send({embeds:[embed2]});
                                                 const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                    $inc:{
-                                                        fishingrod:-number
-                                                    }
+                                                   $inc:{
+                                                       fishingrod:-number
+                                                   }
                                                 });
-
                                                 const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                                     $inc:{
                                                         fishingrod:number
                                                     }
                                                 });
-
-                                                const embed2 = new Discord.MessageEmbed();
-                                                embed2.setTitle(`✅ Successfully Gifted`);
-                                                embed2.setColor(`#30CC71`);
-                                                embed2.setDescription(`${message.author}, You have successfully gifted ${number} :fishing_pole_and_fish: fishing rod to ${target}`);
-                                                embed2.setTimestamp();
-                                                message.channel.send({embeds:[embed2]});
-
                                             }else{
-                                                const embed = new Discord.MessageEmbed();
-                                                embed.setTitle(`${message.author.username}, You don't have ${number} fishing rod to gift`);
-                                                message.channel.send({embeds : [embed]});
+                                                message.channel.send(`${message.author}, you don't have a fishing rod to gift`);
                                             }
+                                            
                                         }else{
                                             const embed = new Discord.MessageEmbed();
                                             embed.setTitle(`${message.author.username}, Please mention a valid number!`);
@@ -794,30 +715,27 @@ module.exports={
                                             message.channel.send({embeds:[embed]});
                                         }
                                     }else{
-                                        if(userData.fishingrod >= 1){
+                                        if(userData.fishingrod>= 1){
+                                            const embed2 = new Discord.MessageEmbed();
+                                            embed2.setTitle(`✅ Successfully Gifted`);
+                                            embed2.setColor(`#30CC71`);
+                                            embed2.setDescription(`${message.author}, You have successfully gifted 🎣 **1** Fishing Rod`);
+                                            embed2.setTimestamp();
+                                            message.channel.send({embeds:[embed2]});
                                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                                 $inc:{
                                                     fishingrod:-1
                                                 }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    fishingrod:1
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted 1 :fishing_pole_and_fish: fishing rod to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
+                                             });
+                                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                                 $inc:{
+                                                     fishingrod:1
+                                                 }
+                                             });
                                         }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have 1 fishing rod to gift`);
-                                            message.channel.send({embeds : [embed]});
+                                            message.channel.send(`${message.author}, you don't have a fishing rod to gift`);
                                         }
+                                       
 
                                     }
                    
@@ -832,13 +750,15 @@ module.exports={
                                         if(userData.cryptocoin >= number){
                                             const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                                 $inc:{
-                                                    cryptocoin:-number
+                                                    cryptocoin:-number,
+                                                    totalitemsdonated:number
                                                 }
                                             });
 
                                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                                 $inc:{
-                                                    cryptocoin:number
+                                                    cryptocoin:number,
+                                                    totalitemsreceived:number
                                                 }
                                             });
 
@@ -868,13 +788,15 @@ module.exports={
                                     if(userData.cryptocoin >= 1){
                                         const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                             $inc:{
-                                                cryptocoin:-1
+                                                cryptocoin:-1,
+                                                totalitemsdonated:1
                                             }
                                         });
 
                                         const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                             $inc:{
-                                                cryptocoin:1
+                                                cryptocoin:1,
+                                                totalitemsreceived:1
                                             }
                                         });
 
@@ -899,31 +821,8 @@ module.exports={
                                 if(number){
                                     if(!isNaN(number) && Math.sign(number) === 1){
                                     if(number % 1=== 0){
-                                        if(userData.bubbletea >= number){
-                                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                                $inc:{
-                                                    bubbletea:-number
-                                                }
-                                            });
-
-                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                                $inc:{
-                                                    bubbletea:number
-                                                }
-                                            });
-
-                                            const embed2 = new Discord.MessageEmbed();
-                                            embed2.setTitle(`✅ Successfully Gifted`);
-                                            embed2.setColor(`#30CC71`);
-                                            embed2.setDescription(`${message.author}, You have successfully gifted ${number} 🧋 bubble tea to ${target}`);
-                                            embed2.setTimestamp();
-                                            message.channel.send({embeds:[embed2]});
-
-                                        }else{
-                                            const embed = new Discord.MessageEmbed();
-                                            embed.setTitle(`${message.author.username}, You don't have ${number} bubble tea to gift`);
-                                            message.channel.send({embeds : [embed]});
-                                        }
+                                        gift(targetData,'Bubble Tea','🧋',number,'food');
+                                        
                                     }else{
                                         const embed = new Discord.MessageEmbed();
                                         embed.setTitle(`${message.author.username}, Please mention a valid number!`);
@@ -935,40 +834,141 @@ module.exports={
                                         message.channel.send({embeds:[embed]});
                                     }
                                 }else{
-                                    if(userData.bubbletea >= 1){
-                                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                                            $inc:{
-                                                bubbletea:-1
-                                            }
-                                        });
-
-                                        const response2 = await userModel.findOneAndUpdate({userID:target.id},{
-                                            $inc:{
-                                                bubbletea:1
-                                            }
-                                        });
-
-                                        const embed2 = new Discord.MessageEmbed();
-                                        embed2.setTitle(`✅ Successfully Gifted`);
-                                        embed2.setColor(`#30CC71`);
-                                        embed2.setDescription(`${message.author}, You have successfully gifted 1 🧋 bubble tea to ${target}`);
-                                        embed2.setTimestamp();
-                                        message.channel.send({embeds:[embed2]});
-                                    }else{
-                                        const embed = new Discord.MessageEmbed();
-                                        embed.setTitle(`${message.author.username}, You don't have 1 bubble tea to gift`);
-                                        message.channel.send({embeds : [embed]});
-                                    }
+                                    gift(targetData,'Bubble Tea','🧋',1,'food');
+                                   
                                 }
+               }else if(argsone_name === 'boat'){
+                let number = args[2];
+           
+                if(number){
+                    if(!isNaN(number) && Math.sign(number) === 1){
+                    if(number % 1=== 0){
+                        if(userData.boat>= number){
+                            const embed2 = new Discord.MessageEmbed();
+                            embed2.setTitle(`✅ Successfully Gifted`);
+                            embed2.setColor(`#30CC71`);
+                            embed2.setDescription(`${message.author}, You have successfully gifted <:boat:904243050279235675> **${number}** boat`);
+                            embed2.setTimestamp();
+                            message.channel.send({embeds:[embed2]});
+                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                $inc:{
+                                    boat:-number
+                                }
+                             });
+                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                 $inc:{
+                                     boat:number
+                                 }
+                             });
+                        }else{
+                            message.channel.send(`${message.author}, you don't have a boat to gift`);
+                        }
+                        
+                    }else{
+                        const embed = new Discord.MessageEmbed();
+                        embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                        message.channel.send({embeds:[embed]});
+                    }
+                    }else{
+                        const embed = new Discord.MessageEmbed();
+                        embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                        message.channel.send({embeds:[embed]});
+                    }
+                }else{
+                    if(userData.boat>= 1){
+                        const embed2 = new Discord.MessageEmbed();
+                        embed2.setTitle(`✅ Successfully Gifted`);
+                        embed2.setColor(`#30CC71`);
+                        embed2.setDescription(`${message.author}, You have successfully gifted <:boat:904243050279235675> **1** boat`);
+                        embed2.setTimestamp();
+                        message.channel.send({embeds:[embed2]});
+                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                            $inc:{
+                                boat:-number
+                            }
+                         });
+                         const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                             $inc:{
+                                 boat:number
+                             }
+                         });
+                    }else{
+                        message.channel.send(`${message.author}, you don't have a boat to gift`);
+                    }
+                   
+                   
+                }
+               }else if(argsone_name === 'credit' && argstwo_name === 'points'){
+                let number = args[3];
+           
+                if(number){
+                    if(!isNaN(number) && Math.sign(number) === 1){
+                    if(number % 1=== 0){
+                        if(userData.creditpoints>= number){
+                            const embed2 = new Discord.MessageEmbed();
+                            embed2.setTitle(`✅ Successfully Gifted`);
+                            embed2.setColor(`#30CC71`);
+                            embed2.setDescription(`${message.author}, You have successfully gifted <:creditpoint:925956240209772564> **${number}** credit points`);
+                            embed2.setTimestamp();
+                            message.channel.send({embeds:[embed2]});
+                            const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                $inc:{
+                                    creditpoints:-number
+                                }
+                             });
+                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                 $inc:{
+                                     creditpoints:number
+                                 }
+                             });
+                        }else{
+                            message.channel.send(`${message.author}, you don't have a credit point to gift`);
+                        }
+                        
+                    }else{
+                        const embed = new Discord.MessageEmbed();
+                        embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                        message.channel.send({embeds:[embed]});
+                    }
+                    }else{
+                        const embed = new Discord.MessageEmbed();
+                        embed.setTitle(`${message.author.username}, Please mention a valid number!`);
+                        message.channel.send({embeds:[embed]});
+                    }
+                }else{
+                    if(userData.creditpoints>= 1){
+                        const embed2 = new Discord.MessageEmbed();
+                        embed2.setTitle(`✅ Successfully Gifted`);
+                        embed2.setColor(`#30CC71`);
+                        embed2.setDescription(`${message.author}, You have successfully gifted <:creditpoint:925956240209772564> **1** credit points`);
+                        embed2.setTimestamp();
+                        message.channel.send({embeds:[embed2]});
+                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                            $inc:{
+                                creditpoints:-number
+                            }
+                         });
+                         const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                             $inc:{
+                                 creditpoints:number
+                             }
+                         });
+                    }else{
+                        message.channel.send(`${message.author}, you don't have a credit points to gift`);
+                    }
+                   
+                   
+                }
                }
 
 
               }else{
-                  message.channel.send(`${target}, You haven't joined the currency game. Please use join command to join the game.`);
+                  message.channel.send(`${target}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+        
               }
             }
         }else{
-            message.channel.send(`${message.author}, You haven't joined the currency game. Please use join command to join the game.`);
+            message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
         }
     }
 }

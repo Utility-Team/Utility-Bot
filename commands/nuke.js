@@ -2,13 +2,13 @@ const Discord = require('discord.js');
 const profileModel = require('../models/profileSchema');
 module.exports = {
     name: 'nuke',
+    aliases:['nuke','channel-clear','cc','channelclear'],
    async execute(message,args) {
      if(!args[0]){
        if(message.member.permissions.has('ADMINISTRATOR')){
-      //   message.channel.send(`${message.author}, this command is not available for some time. Sorry for the inconvenience`)
         const embed = new Discord.MessageEmbed();
-        embed.setTitle(`nuked`);
-       ;
+        embed.setTitle(`✅  Channel Cleared`);
+        embed.setColor(`#30CC71`);
         message.channel.clone().then(async channel => {
             console.log("channel = "+ channel.id)
             let channel_id = channel.id;
@@ -61,7 +61,8 @@ module.exports = {
     }else{
         if(message.mentions.channels.first()){
             const embed = new Discord.MessageEmbed();
-            embed.setTitle(`nuked`);
+            embed.setTitle(`✅  Channel Cleared`);
+            embed.setColor(`#30CC71`);
             const mentionchannel = message.mentions.channels.first();
             const mentionchannel_id = mentionchannel.id;
             var profileData = await profileModel.findOne({guildID:message.guild.id});

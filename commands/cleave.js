@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const profileModel = require('../models/profileSchema');
 module.exports={
     name:'cleave',
+    aliases:['cleave','leave'],
     async execute(message,args){
         if(args[0]){
           if(message.member.permissions.has('ADMINISTRATOR')){
@@ -17,9 +18,10 @@ module.exports={
                       cleave:mentionchannel_id
                     }
                     )
-                  const embed = new Discord.MessageEmbed();
-                  embed.setTitle(`${message.author.username} leave embed channel has been configured successfully`);
-                  message.channel.send({embeds:[embed]});
+                    const embed = new Discord.MessageEmbed();
+                    embed.setTitle(`✅ Leave embed channel has been configured successfully`);
+                    embed.setColor(`#30CC71`);
+                    message.channel.send({embeds:[embed]});
                   
                 }
                 const logsID = profileData.logschannel
@@ -42,14 +44,15 @@ module.exports={
                 message.channel.send({embeds:[embed]});
             }
           }else{
-            var embed = new Discord.MessageEmbed();
-            embed.setTitle(`${message.author.username} Please mention a channel to configure`);
+            const embed = new Discord.MessageEmbed();
+            embed.setTitle(`${message.author.username}, You don't have the perms to configure leave embed`);
             message.channel.send({embeds:[embed]});
           }
       }else{
-        const embed = new Discord.MessageEmbed();
-        embed.setTitle(`${message.author.username}, You don't have the perms to configure leave embed`);
+        var embed = new Discord.MessageEmbed();
+        embed.setTitle(`${message.author.username} Please mention a channel to configure`);
         message.channel.send({embeds:[embed]});
+       
       }
     }
 }

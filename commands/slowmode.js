@@ -13,13 +13,13 @@ module.exports={
       
        let number =  args[0]
        let reason1 = args;
-       delete reason1[0]
+       delete reason1[0];
        let reason = args.join(' ');
        if(!reason){
          reason = "No reason provided";
        }
        message.channel.setRateLimitPerUser(number,reason);
-       message.channel.send(`The slowmode of this channel is set to **${number}** with the reason: ${reason}`);
+       message.channel.send(`The slowmode of this channel is set to **${number}s** with the reason: ${reason}`);
        const profile = await profileModel.findOne({guildID:message.guild.id});
        const logsID = profile.logschannel
        if(profile){

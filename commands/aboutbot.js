@@ -6,7 +6,7 @@ module.exports = {
     let profileData = await profileModel.findOne({guildID:message.guild.id});
     const embed = new Discord.MessageEmbed();
     embed.setTitle('Here is about the bot')
-    embed.setDescription(`My name is Utility and i am a discord bot made by my creator abhishekkholiya#7965 who is a software developer. You can type ${profileData.prefix}help to know what all i can do and for getting my invite link you can type ${profileData.prefix}inviteme`)
+    embed.setDescription(`My name is Utility and i am a discord bot made by my creator abhishekkholiya#5152 who is a software developer. You can type ${profileData.prefix}help to know what all i can do and for getting my invite link you can type ${profileData.prefix}inviteme`)
     embed.setFooter('Thanks for Choosing Utility')
     message.channel.send({embeds:[embed]});
   }

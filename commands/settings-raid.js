@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const serverModel = require('../models/profileSchema');
 module.exports={
     name:'settings-raid',
+    aliases:['settings-raid','settings-rob','setting-raid','setting-rob','settingsraid','settingsrob','s-raid','s-rob','sraid','srob'],
     async execute(message,args){
         let argsone_name; 
         let serverData = await serverModel.findOne({guildID:message.guild.id});

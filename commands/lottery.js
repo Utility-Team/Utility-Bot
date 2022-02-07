@@ -1,10 +1,39 @@
 const Discord = require('discord.js');
 const userModel = require('../models/userSchema');
+const serverModel = require('../models/profileSchema');
 module.exports={
     name:'lottery',
     async execute(message,args){
        let userData = await userModel.findOne({userID:message.author.id});
+       let serverData = await serverModel.findOne({guildID:message.guild.id});
        if(userData){
+        let userinfo = await userModel.findOne({userID:message.author.id});
+        if(userinfo){
+          if(userinfo.xp / 1500 === 0){
+            const response = await userModel.findOneAndUpdate({
+                userID:message.author.id,
+              },
+              {
+                $inc:{
+                  xp:1,
+                  level:1,
+                  commands:1
+                },
+              }
+            );
+          }else{
+            const response = await userModel.findOneAndUpdate({
+                userID:message.author.id,
+              },
+              {
+                $inc:{
+                  xp:15,
+                  commands:1
+                }
+              }
+            );
+          }
+      }
           let number = args[0];
             let lastlottery;
            if(userData.lastlottery){  
@@ -20,7 +49,7 @@ module.exports={
                 if(number % 1=== 0){
                     if(userData.wallet >= number){
                       if(number <= 25000){
-                        if(userData.wallet < 1000000000 && userData.wallet + parseInt(number) <= 1000000000){
+                        if(userData.wallet < 5000000000 && userData.wallet + parseInt(number) <= 5000000000){
                                 var d2 = new Date();
                                 var n2 = d2.getTime();
                                 const response = await userModel.findOneAndUpdate({userID:message.author.id},{
@@ -44,23 +73,23 @@ module.exports={
                                     .addComponents(
                                         new Discord.MessageButton()
                                             .setCustomId('page1')
-                                            .setLabel('H')
+                                            .setEmoji('<:lottery:938436846403346492>')
                                             .setStyle('PRIMARY'),
                                         new Discord.MessageButton()
                                             .setCustomId('page2')
-                                            .setLabel('E')
+                                            .setEmoji('<:lottery:938436846403346492>')
                                             .setStyle('PRIMARY'),
                                         new Discord.MessageButton()
                                             .setCustomId('page3')
-                                            .setLabel('L')
+                                            .setEmoji('<:lottery:938436846403346492>')
                                             .setStyle('PRIMARY'),
                                         new Discord.MessageButton()
                                             .setCustomId('page4')
-                                            .setLabel('L')
+                                            .setEmoji('<:lottery:938436846403346492>')
                                             .setStyle('PRIMARY'),
                                             new Discord.MessageButton()
                                             .setCustomId('page5')
-                                            .setLabel('O')
+                                            .setEmoji('<:lottery:938436846403346492>')
                                             .setStyle('PRIMARY'),
                                     
                                         
@@ -188,7 +217,8 @@ module.exports={
   
         }
        }else{
-        message.channel.send(`${message.author} You haven't joined the currency game. Please type join to join the game`);
+        message.channel.send(`${message.author}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
+        
        }
     }
 }
