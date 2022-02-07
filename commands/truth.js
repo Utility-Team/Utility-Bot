@@ -42,7 +42,7 @@ module.exports={
                 });
                 const embed = new Discord.MessageEmbed();
                 embed.setTitle(`Truth:`);
-                embed.setDescription(`**${topics[1]}**`);
+                embed.setDescription(`**${topics[0]}**`);
                 embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
                 embed.setTimestamp();
                 embed.setColor(`#404EED`);
