@@ -707,19 +707,7 @@ client.on('messageCreate', async (message)=>{
 //           message.channel.send({embeds:[embed]});
 //         }
 //  }
-// }  
-if(message.content.startsWith('shit')){
-  await message.channel.messages.fetch({limit:1}).then(messages=>{
-    message.channel.bulkDelete(messages);
-}).catch(err=>{
-   console.log(err)
-   message.channel.send(err)
-});
- message.channel.send('such words are not allowed!');
-}
-//<@!856486451113361458> prefix
- //shareUpdate();
- 
+// }   
  if(message.author){
      let userData = await userModel.findOne({partner:message.author.id});
      if(userData){

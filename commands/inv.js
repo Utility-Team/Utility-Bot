@@ -240,13 +240,33 @@ module.exports={
                           }
                       }
                   }else{
-                      let embed = new Discord.MessageEmbed();
-                      embed.setTitle(`${message.author.username}'s inventory`);
-                      embed.setThumbnail(`${avatar}`);
-                      embed.setDescription(`You don't have any items in the inventory`);
-                      embed.setFooter(`Requested by ${message.author.username}`,avatar);
-                      embed.setTimestamp();
-                      message.channel.send({embeds:[embed]});
+                        let creditpoints;
+                        if(userData.creditpoints){
+                            creditpoints = userData.creditpoints
+                        }else{
+                            creditpoints = 0;
+                        }
+                        if(userData.fishingrod === 0 && userData.huntingrifle === 0 && userData.lock === 0 && creditpoints === 0){
+                            let embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}'s inventory`);
+                            embed.setThumbnail(`${avatar}`);
+                            embed.setDescription(`You don't have any items in the inventory`);
+                            embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                            embed.setTimestamp();
+                            message.channel.send({embeds:[embed]});
+                        }else{
+                            let embed = new Discord.MessageEmbed();
+                            embed.setTitle(`${message.author.username}'s inventory`);
+                            embed.setThumbnail(`${avatar}`);
+                            embed.addFields({name:`🎣 Fishing Rod`,value:`${userData.fishingrod}`},
+                             {name:`<:rifle:883578413888184350> Hunting Rifle`,value:`${userData.huntingrifle}`},
+                             {name:`🔒 Lock`,value:`${userData.lock}`},
+                             {name:`Credit Points:`,value:`${creditpoints}`}
+                            );
+                            embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                            embed.setTimestamp();
+                            message.channel.send({embeds:[embed]});
+                        }
                   }
               }else{
                   const memberTarget = message.guild.members.cache.get(target.id);
@@ -457,6 +477,13 @@ module.exports={
                                   }
                               }
                           }else{
+                            let creditpoints;
+                            if(targetData.creditpoints){
+                                creditpoints = targetData.creditpoints
+                            }else{
+                                creditpoints = 0;
+                            }
+                            if(targetData.fishingrod === 0 && targetData.huntingrifle === 0 && targetData.lock === 0 && creditpoints === 0){
                               let embed = new Discord.MessageEmbed();
                               embed.setTitle(`${memberTarget.user.username}'s inventory`);
                               embed.setThumbnail(`${targetavatar}`);
@@ -464,6 +491,19 @@ module.exports={
                               embed.setFooter(`Requested by ${message.author.username}`,avatar);
                               embed.setTimestamp();
                               message.channel.send({embeds:[embed]});
+                            }else{
+                                let embed = new Discord.MessageEmbed();
+                                embed.setTitle(`${memberTarget.user.username}'s inventory`);
+                                embed.setThumbnail(`${targetavatar}`);
+                                embed.addFields({name:`🎣 Fishing Rod`,value:`${targetData.fishingrod}`},
+                                {name:`<:rifle:883578413888184350> Hunting Rifle`,value:`${targetData.huntingrifle}`},
+                                {name:`🔒 Lock`,value:`${targetData.lock}`},
+                                {name:`Credit Points:`,value:`${creditpoints}`}
+                                );
+                                embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                                embed.setTimestamp();
+                                message.channel.send({embeds:[embed]});
+                            }
                           }
                       }else{
                           message.channel.send(`${target}, You haven't joined the game. Type ${serverData.prefix}join to join the game`);
