@@ -80,13 +80,13 @@ module.exports = {
                                 }else{
                                   const embed = new Discord.MessageEmbed();
                                   embed.setTitle(`❌ Convert Failed`);
-                                  embed.setDescription(`${message.author}, You can't have more than 1 billion coins your wallet`);
+                                  embed.setDescription(`${message.author}, You can't have more than 5 billion coins your wallet`);
                                   message.channel.send({embeds:[embed]});
                                 }
                                   
                             }else{
                                 const embed = new Discord.MessageEmbed();
-                                embed.setTitle(`${message.author.username} You don't have that much cryptocoins to convert!`);
+                                embed.setTitle(`${message.author.username} You don't have that many cryptocoins to convert!`);
                                 message.channel.send({embeds:[embed]});
                             }
                         }else{

@@ -1357,8 +1357,7 @@ module.exports = {
                    if(number){
                     if(!isNaN(number) && Math.sign(number) === 1){
                       if(number % 1=== 0){
-                           if(userbal2>= cost){
-                             if(userData2.cryptocoin + parseInt(number) <= 10000 ){
+                           if(userData2.cryptocoin>= totalcoins){      
                                 let d2 = new Date();
                                 let n2 = d2.getTime();
                                 const newbuy = await userModel.findOneAndUpdate({userID:message.author.id},{
@@ -1366,34 +1365,20 @@ module.exports = {
                                 });
                                 const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                                   $inc:{
-                                    cryptocoin:number,
-                                    wallet:-cost,
-                                    networth:-cost
+                                    cryptocoin:-number,
+                                    wallet:cost,
+                                    networth:cost
                                   }
                                 });
-                                let findshare = await botModel.findOneAndUpdate({botid:1});
-                                if(findshare.lastcryptopurchaseid !== userData.userID){
-                                  const cryptoupdate = await botModel.findOneAndUpdate({botid:1},
-                                    {
-                                      $inc:{
-                                        totalcryptocoin:1
-                                      },
-                                      lastcryptopurchaseid:userData.userID
-                                    });
-                                }
                                 const embed = new Discord.MessageEmbed();
-                                embed.setAuthor(`✅ Successfully Purchased`);
+                                embed.setAuthor(`✅ Successfully Sold`);
                                 embed.setColor(`#30CC71`);
-                                embed.setDescription(`You have successfully purchased ${totalcoins} cryptocoin`);
+                                embed.setDescription(`You have successfully sold ${totalcoins} cryptocoin for ${cost}`);
                                 embed.setFooter(`Requested by ${message.author.username}`,avatar);
                                 embed.setTimestamp();
-                                message.channel.send({embeds:[embed]});
-                              }else{
-                                message.channel.send(`${message.author}, You can't have more than 10000 cryptocoins!`);
-                            }
-                             
+                                message.channel.send({embeds:[embed]});           
                            }else{
-                             message.channel.send(`${message.author}, You don't have enough money to buy!`);
+                             message.channel.send(`${message.author}, You don't have that many cryptocoins to sell!`);
                            }
                       }else{
                         const embed = new Discord.MessageEmbed();
@@ -1406,9 +1391,7 @@ module.exports = {
                       message.channel.send({embeds:[embed]});
                     }
                   }else{
-                      console.log(userData2.cryptocoin);
-                    if(userbal2>= cryptovalue){
-                      if(userData2.cryptocoin < 10000){
+                    if(userData2.cryptocoin>= 1){
                         let d2 = new Date();
                         let n2 = d2.getTime();
                         const newbuy = await userModel.findOneAndUpdate({userID:message.author.id},{
@@ -1416,31 +1399,18 @@ module.exports = {
                         });
                         const response = await userModel.findOneAndUpdate({userID:message.author.id},{
                           $inc:{
-                            cryptocoin:1,
-                            wallet:-cryptovalue,
-                            networth:-cryptovalue
+                            cryptocoin:-1,
+                            wallet:cryptovalue,
+                            networth:cryptovalue
                           }
                         });
-                        let findshare = await botModel.findOneAndUpdate({botid:1});
-                        if(findshare.lastcryptopurchaseid !== userData.userID){
-                          const cryptoupdate = await botModel.findOneAndUpdate({botid:1},
-                            {
-                              $inc:{
-                                totalcryptocoin:1
-                              },
-                              lastcryptopurchaseid:userData.userID
-                            });
-                        }
                         const embed = new Discord.MessageEmbed();
-                        embed.setAuthor(`✅ Successfully Purchased`);
+                        embed.setAuthor(`✅ Successfully Sold`);
                         embed.setColor(`#30CC71`);
-                        embed.setDescription(`You have successfully purchased 1 cryptocoin`);
+                        embed.setDescription(`You have successfully sold 1 cryptocoin for ${cryptovalue}`);
                         embed.setFooter(`Requested by ${message.author.username}`,avatar);
                         embed.setTimestamp();
                         message.channel.send({embeds:[embed]});
-                      }else{
-                        message.channel.send(`${message.author}, You can't have more than 10000 cryptocoins!`);
-                      }
                     }else{
                       message.channel.send(`${message.author}, You don't have enough money to buy!`);
                     }
