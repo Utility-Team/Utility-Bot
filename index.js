@@ -486,7 +486,7 @@ let randomStuff = async (message)=>{
   if(message.author.bot !== true && !message.content.startsWith(`${prefix}`)){
     const randomNumber = Math.floor(Math.random()*20);
     console.log(randomNumber)
-    if(randomNumber === 15){
+    if(randomNumber === 15 || randomNumber === 14 || randomNumber === 13 || randomNumber === 12){
       const embed = new Discord.MessageEmbed();
       embed.setTitle(`Someone lost their wallet! Wanna pick it up?`);
       embed.setImage('https://i.ibb.co/F8H3W6C/20n.gif');
@@ -647,6 +647,11 @@ let randomStuff = async (message)=>{
                  boat:0,
                  lock:0,
                  creditpoints:0,
+                 totalmoneydonated:0,
+                 totalmoneyreceived:0,
+                 totalitemsdonated:0,
+                 totalitemsreceived:0
+
               });
               profile.save();
             }

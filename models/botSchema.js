@@ -77,7 +77,8 @@ const botSchema = new mongoose.Schema({
   jedilightsabervalue:{type:Number,require:true},
   sithlightsabervalue:{type:Number,require:true},
   cars:{type:Array,require:true},
-  totalseen:{type:Number,require:true}
+  totalseen:{type:Number,require:true},
+  vrglassesvalue:{type:Number,require:true}
 });
 const model = mongoose.model('botModels',botSchema);
 module.exports = model;

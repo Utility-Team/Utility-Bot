@@ -1741,6 +1741,35 @@ module.exports = {
                   sell('Smartphone','<:smartphone:918057432264101978>',1,cost2,'gadgets');   
                   
                  }
+                }else if(argsone_name === 'vr' && argstwo_name === 'glasses' || argsone_name === 'vr' && argstwo_name === 'glass'){
+                  let totalpc = args[2];
+                  let number = args[2];
+                  let vrglassesvalue = botData.vrglassesvalue;
+                  let userData2 = await userModel.findOne({userID:message.author.id});
+                  let userbal2 = userData2.wallet;
+                  let cost = vrglassesvalue * totalpc;
+                  console.log(cost);
+                  if(number){
+                   if(!isNaN(number) && Math.sign(number) === 1){
+                     if(number % 1=== 0){
+                        sell('VR Glasses','<:vrglass:939429040245334036>',number,cost,'gadgets');   
+                       
+                     }else{
+                       const embed = new Discord.MessageEmbed();
+                       embed.setTitle(`${message.author.username}, Please enter a valid number!`);
+                       message.channel.send({embeds:[embed]});
+                     }
+                   }else{
+                     const embed = new Discord.MessageEmbed();
+                     embed.setTitle(`${message.author.username}, Please enter a valid number!`);
+                     message.channel.send({embeds:[embed]});
+                   }
+                 }else{
+                  let cost2= vrglassesvalue;
+                  console.log(cost2);
+                  sell('VR Glasses','<:vrglass:939429040245334036>',1,cost2,'gadgets');   
+                  
+                 }
                 }else if(argsone_name === 'spidey' && argstwo_name==='badge'){
                   let totalspidey = args[2];
                   let number = args[2];

@@ -88,6 +88,7 @@ module.exports={
         let blackmousevalue = botdata.blackmousevalue;
         let monitorvalue = botdata.monitorvalue;
         let pcvalue = botdata.pcvalue;
+        let vrglassesvalue = botdata.vrglassesvalue;
         let avatar;
         if(userData.avatar){
           if(userData.avatar !== '' && userData.premium === 'enable'){
@@ -160,7 +161,8 @@ module.exports={
         {name:`<:gamingkeyboard:918055261854392330> black keyboard - <:uc:922720730272137256> ${blackkeyboardvalue}`,value:'keyboard for some noise'},
         {name:`<:whitegamingkeyboard:918055512132698133> white keyboard - <:uc:922720730272137256> ${whitekeyboardvalue}`,value:'white keyboard for more noise'},
         {name:`<:laptop:918059938612404255> laptop - <:uc:922720730272137256> ${laptopvalue}`,value:'laptop for work'},
-        {name:`<:smartphone:918057432264101978> smartphone - <:uc:922720730272137256> ${mobilevalue}`,value:'smartphone you need'}
+        {name:`<:smartphone:918057432264101978> smartphone - <:uc:922720730272137256> ${mobilevalue}`,value:'smartphone you need'},
+        {name:`<:vrglass:939429040245334036>VR glasses - <:uc:922720730272137256> ${vrglassesvalue}`,value:'vr glasses to get into metaverse'}
         
         );
         embed5.setFooter(`Requested by ${message.author.username}`,avatar);;
