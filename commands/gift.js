@@ -977,6 +977,8 @@ module.exports={
                    
                    
                 }
+               }else{
+                   message.channel.send(`${message.author}, that item is not available to gift`);   
                }
 
 

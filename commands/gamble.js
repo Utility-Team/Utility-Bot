@@ -287,7 +287,7 @@ module.exports = {
                                      embed.setColor('#FF470F');
                                      message.channel.send({embeds:[embed]});
                                      if(userData.totalgamble>100){
-                                      check_Rewards('Successfully playing 100 gambles','500 xp','<:supergamblerbadge:925733231532322837>',1,'Gamble',500,'xp');
+                                      check_Rewards('Successfully playing 100 gambles','500 xp','<:playing100gambles:925732172277620746>',1,'Gamble',500,'xp');
                                      }
                                      if(userData.totalgamble>1000){
                                       check_Rewards('Successfully playing 1000 gambles','<:uc:922720730272137256> 50k','<:playing1000rpsgamesbadge:925749675020124252>',4,'Gamble',50000,'money');
@@ -315,7 +315,7 @@ module.exports = {
                                      embed.setTimestamp();
                                      message.channel.send({embeds:[embed]});
                                      if(userData.totalgamble>100){
-                                      check_Rewards('Successfully playing 100 gambles','500 xp','<:supergamblerbadge:925733231532322837>',1,'Gamble',500,'xp');
+                                      check_Rewards('Successfully playing 100 gambles','500 xp','<:playing100gambles:925732172277620746>',1,'Gamble',500,'xp');
                                      }
                                      if(userData.totalgamble>1000){
                                       check_Rewards('Successfully playing 1000 gambles','<:uc:922720730272137256> 50k','<:playing1000rpsgamesbadge:925749675020124252>',4,'Gamble',50000,'money');
