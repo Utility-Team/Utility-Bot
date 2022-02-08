@@ -35,8 +35,12 @@ module.exports = {
                         bestspeed = 0;
                     }   
                     let avatar;
-                    if(targetData.avatar && targetData.premium === 'enable'){
-                        avatar = targetData.avatar;
+                    if(targetData.avatar){
+                        if(targetData.avatar && targetData.premium === 'enable'){
+                            avatar = targetData.avatar;
+                        }else{
+                            avatar = target.displayAvatarURL();
+                        }
                     }else{
                         avatar = target.displayAvatarURL();
                     }
@@ -94,8 +98,12 @@ module.exports = {
                     bestspeed = 0;
                 }   
                 let avatar;
-                if(userData.avatar && userData.premium === 'enable'){
-                    avatar = userData.avatar;
+                if(userData.avatar){
+                    if(userData.avatar && userData.premium === 'enable'){
+                        avatar = userData.avatar;
+                    }else{
+                        avatar = message.author.displayAvatarURL();
+                    }
                 }else{
                     avatar = message.author.displayAvatarURL();
                 }
@@ -240,7 +248,17 @@ module.exports = {
                      //last use
                      lastuse:0,
                      avatar:'',
-                     background:''
+                     background:'',
+                     totalmoneydonated:0,
+                     totalmoneyreceived:0,
+                     totalitemsdonated:0,
+                     totalitemsreceived:0,
+                     fishingrod:0,
+                     huntingrifle:0,
+                     lock:0,
+                     boat:0,
+                     creditpoints:0,
+                     premiumtype:0
                   });
                   profile.save();
             }

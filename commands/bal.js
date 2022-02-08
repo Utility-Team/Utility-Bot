@@ -211,7 +211,11 @@ module.exports = {
                   boat:0,
                   lock:0,
                   creditpoints:0,
-                  premiumtype:0
+                  premiumtype:0,
+                  totalmoneydonated:0,
+                  totalmoneyreceived:0,
+                  totalitemsdonated:0,
+                  totalitemsreceived:0
 
                 });
                 profile.save();

@@ -134,7 +134,11 @@ module.exports={
               fishingrod:0,
               boat:0,
               lock:0,
-              creditpoints:0
+              creditpoints:0,
+              totalmoneydonated:0,
+              totalmoneyreceived:0,
+              totalitemsdonated:0,
+              totalitemsreceived:0
            });
            profile.save();
            message.channel.send(`${message.author}, Your Profile has been registered successfully to check balance type ${serverData.prefix}bal`);

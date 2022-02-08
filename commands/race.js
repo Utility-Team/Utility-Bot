@@ -358,7 +358,11 @@ module.exports = {
                                                                      fishingrod:0,
                                                                      lock:0,
                                                                      boat:0,
-                                                                     creditpoints:0
+                                                                     creditpoints:0,
+                                                                     totalmoneydonated:0,
+                                                                     totalmoneyreceived:0,
+                                                                     totalitemsdonated:0,
+                                                                     totalitemsreceived:0
                                                                   });
                                                                   profile.save();
                                                             }
@@ -503,7 +507,12 @@ module.exports = {
                                                                      fishingrod:0,
                                                                      lock:0,
                                                                      boat:0,
-                                                                     creditpoints:0
+                                                                     creditpoints:0,
+                                                                     totalmoneydonated:0,
+                                                                     totalmoneyreceived:0,
+                                                                     totalitemsdonated:0,
+                                                                     totalitemsreceived:0,
+                                                                     bestspeed:0
                                                                   });
                                                                   profile.save();
                                                             }
@@ -659,7 +668,11 @@ module.exports = {
                                                                      fishingrod:0,
                                                                      lock:0,
                                                                      boat:0,
-                                                                     creditpoints:0
+                                                                     creditpoints:0,
+                                                                     totalmoneydonated:0,
+                                                                     totalmoneyreceived:0,
+                                                                     totalitemsdonated:0,
+                                                                     totalitemsreceived:0
                                                                   });
                                                                   profile.save();
                                                             }
@@ -802,7 +815,8 @@ module.exports = {
                                                                      fishingrod:0,
                                                                      lock:0,
                                                                      boat:0,
-                                                                     creditpoints:0
+                                                                     creditpoints:0,
+                                                                     bestspeed:0
                                                                     
                                                                   });
                                                                   profile.save();
