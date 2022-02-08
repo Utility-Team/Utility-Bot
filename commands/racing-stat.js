@@ -50,7 +50,7 @@ module.exports = {
                     {name:`Total Races Won:`,value:`${raceswon}`},
                     {name:`Total Races Lost:`,value:`${raceslost}`}
                     );
-                    if(userData.bestspeed){
+                    if(targetData.bestspeed){
                        embed.addField({name:`Best Speed:`,value:`${bestspeed}`});
                     }
                     embed.setThumbnail(avatar);
