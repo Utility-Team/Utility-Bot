@@ -266,6 +266,9 @@ module.exports={
             if(target){ 
                 let targetData = await userModel.findOne({userID:target.id});    
                 if(targetData){
+                    if(userData.userID === targetData.userID){
+                        return message.channel.send(`${message.author}, you can't give yourself money!`);
+                    }
                     if(!isNaN(args[1]) && Math.sign(args[1]) === 1){
                         if(userData.wallet >= args[1]){
                             if(targetData.wallet < 5000000000 && targetData.wallet + parseInt(args[1])<=5000000000 ){
