@@ -385,7 +385,7 @@ module.exports={
                               let bankspace = userData.level * 10000;
                               const embed2 = new Discord.MessageEmbed();
                               embed2.setTitle(`<:creditpoint:925956240209772564> Credit Points used!`);
-                              embed2.setDescription(`You have successfully used **${argsthree_name} <:creditpoint:925956240209772564> Credit Points and your bank limit has been increased to ${bankspace+ banklimit + argsthree_name}**`);
+                              embed2.setDescription(`You have successfully used **${argsthree_name} <:creditpoint:925956240209772564> Credit Points and your bank limit has been increased to ${userData.level * 10000 + banklimit + parseInt(argsthree_name)}**`);
                               embed2.setFooter(`Requested by ${message.author.username}`,avatar);
                               embed2.setColor(`#30CC71`);
                               embed2.setTimestamp();

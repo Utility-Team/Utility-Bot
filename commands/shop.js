@@ -40,7 +40,12 @@ module.exports={
     if(userData){
         var d = new Date();
         var n = d.getTime();
-        var lastshop = userData.lastshop;
+        var lastshop;
+        if(userData.lastshop){
+          lastshop = userData.lastshop;
+        }else{
+          lastshop = 0;
+        }
         let timeup;
         let timeup2;
         if(userData.premium === 'enable'){
@@ -84,10 +89,14 @@ module.exports={
         let monitorvalue = botdata.monitorvalue;
         let pcvalue = botdata.pcvalue;
         let avatar;
-        if(userData.avatar !== '' && userData.premium === 'enable'){
-          avatar = userData.avatar;
+        if(userData.avatar){
+          if(userData.avatar !== '' && userData.premium === 'enable'){
+            avatar = userData.avatar;
+          }else{
+            avatar = message.author.displayAvatarURL();
+          }
         }else{
-          avatar = avatar;;
+          avatar = message.author.displayAvatarURL();
         }
         const embed = new Discord.MessageEmbed();
         embed.setTitle(`Items available to Shop!`);

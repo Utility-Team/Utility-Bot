@@ -304,7 +304,7 @@ module.exports={
                                 embed.setColor(`#30CC71`);
                                 message.channel.send({embeds:[embed]});
                                 if(userData.rewards){
-                                    if(userData.totalmoneydonated + parseInt(args[1])>=100000 && userData.totalmoneydonated + parseInt(args[1])<1000){
+                                    if(userData.totalmoneydonated + parseInt(args[1])>=100000){
                                         console.log('here 2');
                                         check_Rewards('Donation of 100k Coins',10000,'<:moneysharingbadge:925707445593051177>',1);
                                     }
@@ -320,7 +320,7 @@ module.exports={
                             }else{
                                 const embed = new Discord.MessageEmbed();
                                 embed.setTitle(`❌ Transaction Failed`);
-                                embed.setDescription(`${target} can't have more than 1 billion coins in their wallet`);
+                                embed.setDescription(`${target} can't have more than 5 billion coins in their wallet`);
                                 message.channel.send({embeds:[embed]});
                             }
                 
