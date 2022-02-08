@@ -104,7 +104,7 @@ module.exports = {
                             userID:message.author.id,
                           },
                           {
-                            job:'politican',
+                            job:'politician',
                             salary:15000
             
                           }
