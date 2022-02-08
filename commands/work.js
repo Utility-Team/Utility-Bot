@@ -618,6 +618,11 @@ module.exports = {
                           words = ['i love to help patients','i love to cure people','we must wear mask while going out','nurse can you help me with this?'];
                         }else if(job === 'politician'){
                           words = ['vote for me!','i will change your place','i am different from other politicians','i focus on doing best for my people'];
+                        }else if(job ==='politican'){
+                          words = ['vote for me!','i will change your place','i am different from other politicians','i focus on doing best for my people'];
+                          let response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                            job:'politician'
+                          });
                         }else if(job === 'teacher'){
                           words = ['i love to help my students','teacher is the hero of a student','teaching is a pillar of the society','teaching is the creator of other professions'];
                         }else if(job === 'police officer'){
