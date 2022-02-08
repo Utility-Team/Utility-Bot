@@ -7,6 +7,7 @@ module.exports = {
         const userData = await userModel.findOne({userID:message.author.id});
         const target = message.mentions.users.first() || message.guild.members.cache.get(args[0]);
         if(args[0] && target){
+            const memberTarget = message.guild.members.cache.get(target.id);
             if(userData){
                 const targetData = await userModel.findOne({userID:target.id});
                 if(targetData){
@@ -39,13 +40,13 @@ module.exports = {
                         if(targetData.avatar && targetData.premium === 'enable'){
                             avatar = targetData.avatar;
                         }else{
-                            avatar = target.displayAvatarURL();
+                            avatar = memberTarget.user.displayAvatarURL();
                         }
                     }else{
-                        avatar = target.displayAvatarURL();
+                        avatar = memberTarget.user.displayAvatarURL();
                     }
                     const embed = new Discord.MessageEmbed();
-                    embed.setTitle(`${target.username}'s racing stats`);
+                    embed.setTitle(`${memberTarget.user.username}'s racing stats`);
                     embed.addFields({name:`Total Matches Played:`,value:`${totalraces}`},
                     {name:`Total Races Won:`,value:`${raceswon}`},
                     {name:`Total Races Lost:`,value:`${raceslost}`}
@@ -59,13 +60,13 @@ module.exports = {
                     message.channel.send({embeds:[embed]});
                 }else{
                     const embed = new Discord.MessageEmbed();
-                    embed.setTitle(`${target.username}'s racing stats`);
+                    embed.setTitle(`${memberTarget.user.username}'s racing stats`);
                     embed.addFields({name:`Total Matches Played:`,value:`0`},
                         {name:`Total Races Won:`,value:`0`},
                         {name:`Total Races Lost:`,value:`0`},
                         {name:`Best Speed:`,value:`0`} 
                     );
-                    embed.setThumbnail(target.displayAvatarURL());
+                    embed.setThumbnail(avatar);
                     embed.setFooter(`Requested by ${message.author.username}`,avatar);
                     embed.setTimestamp();
                     message.channel.send({embeds:[embed]});
