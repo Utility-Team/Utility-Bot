@@ -114,8 +114,8 @@ module.exports = {
                         embed2.setTimestamp();
                         let m2 = await message.channel.send({embeds:[embed2]});
                         let val = 5;
-                        let topics = ['may the force be with you!','come on! i can do this','climate change is real!','join the dark side!','Without the confidence, nothing can be accomplished','We love the things we love for what they are','Beauty is not in the face; beauty is a light in the heart','Love For All, Hatred For None','Change the world by being yourself','Every moment is a fresh beginning','What we think, we become','Tough times never last but tough people do','Have enough courage to start and enough heart to finish','Determine your priorities and focus on them','Be so good they can’t ignore you','Try to be a rainbow in someone’s cloud','There is no substitute for hard work','Wanting to be someone else is a waste of who you are','The time is always right to do what is right','The meaning of life is to give life meaning',"Dream is not the thing you see in sleep but is that thing that doesn't let you sleep"];
-                        let topics2 = ['ᴍᴀʏ ᴛʜᴇ ꜰᴏʀᴄᴇ ʙᴇ ᴡɪᴛʜ ʏᴏᴜ!','ᴄᴏᴍᴇ ᴏɴ! ɪ ᴄᴀɴ ᴅᴏ ᴛʜɪꜱ','ᴄʟɪᴍᴀᴛᴇ ᴄʜᴀɴɢᴇ ɪꜱ ʀᴇᴀʟ!','ᴊᴏɪɴ ᴛʜᴇ ᴅᴀʀᴋ ꜱɪᴅᴇ!','ᴡɪᴛʜᴏᴜᴛ ᴛʜᴇ ᴄᴏɴꜰɪᴅᴇɴᴄᴇ, ɴᴏᴛʜɪɴɢ ᴄᴀɴ ʙᴇ ᴀᴄᴄᴏᴍᴘʟɪꜱʜᴇᴅ','ᴡᴇ ʟᴏᴠᴇ ᴛʜᴇ ᴛʜɪɴɢꜱ ᴡᴇ ʟᴏᴠᴇ ꜰᴏʀ ᴡʜᴀᴛ ᴛʜᴇʏ ᴀʀᴇ','ʙᴇᴀᴜᴛʏ ɪꜱ ɴᴏᴛ ɪɴ ᴛʜᴇ ꜰᴀᴄᴇ; ʙᴇᴀᴜᴛʏ ɪꜱ ᴀ ʟɪɢʜᴛ ɪɴ ᴛʜᴇ ʜᴇᴀʀᴛ','ʟᴏᴠᴇ ꜰᴏʀ ᴀʟʟ, ʜᴀᴛʀᴇᴅ ꜰᴏʀ ɴᴏɴᴇ','ᴄʜᴀɴɢᴇ ᴛʜᴇ ᴡᴏʀʟᴅ ʙʏ ʙᴇɪɴɢ ʏᴏᴜʀꜱᴇʟꜰ','ᴇᴠᴇʀʏ ᴍᴏᴍᴇɴᴛ ɪꜱ ᴀ ꜰʀᴇꜱʜ ʙᴇɢɪɴɴɪɴɢ','What we think, we become','ᴛᴏᴜɢʜ ᴛɪᴍᴇꜱ ɴᴇᴠᴇʀ ʟᴀꜱᴛ ʙᴜᴛ ᴛᴏᴜɢʜ ᴘᴇᴏᴘʟᴇ ᴅᴏ','ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ᴄᴏᴜʀᴀɢᴇ ᴛᴏ ꜱᴛᴀʀᴛ ᴀɴᴅ ᴇɴᴏᴜɢʜ ʜᴇᴀʀᴛ ᴛᴏ ꜰɪɴɪꜱʜ','ᴅᴇᴛᴇʀᴍɪɴᴇ ʏᴏᴜʀ ᴘʀɪᴏʀɪᴛɪᴇꜱ ᴀɴᴅ ꜰᴏᴄᴜꜱ ᴏɴ ᴛʜᴇᴍ','ʙᴇ ꜱᴏ ɢᴏᴏᴅ ᴛʜᴇʏ ᴄᴀɴ’ᴛ ɪɢɴᴏʀᴇ ʏᴏᴜ','ᴛʀʏ ᴛᴏ ʙᴇ ᴀ ʀᴀɪɴʙᴏᴡ ɪɴ ꜱᴏᴍᴇᴏɴᴇ’ꜱ ᴄʟᴏᴜᴅ','ᴛʜᴇʀᴇ ɪꜱ ɴᴏ ꜱᴜʙꜱᴛɪᴛᴜᴛᴇ ꜰᴏʀ ʜᴀʀᴅ ᴡᴏʀᴋ','ᴡᴀɴᴛɪɴɢ ᴛᴏ ʙᴇ ꜱᴏᴍᴇᴏɴᴇ ᴇʟꜱᴇ ɪꜱ ᴀ ᴡᴀꜱᴛᴇ ᴏꜰ ᴡʜᴏ ʏᴏᴜ ᴀʀᴇ','ᴛʜᴇ ᴛɪᴍᴇ ɪꜱ ᴀʟᴡᴀʏꜱ ʀɪɢʜᴛ ᴛᴏ ᴅᴏ ᴡʜᴀᴛ ɪꜱ ʀɪɢʜᴛ','ᴛʜᴇ ᴍᴇᴀɴɪɴɢ ᴏꜰ ʟɪꜰᴇ ɪꜱ ᴛᴏ ɢɪᴠᴇ ʟɪꜰᴇ ᴍᴇᴀɴɪɴɢ',"ᴅʀᴇᴀᴍ ɪꜱ ɴᴏᴛ ᴛʜᴇ ᴛʜɪɴɢ ʏᴏᴜ ꜱᴇᴇ ɪɴ ꜱʟᴇᴇᴘ ʙᴜᴛ ɪꜱ ᴛʜᴀᴛ ᴛʜɪɴɢ ᴛʜᴀᴛ ᴅᴏᴇꜱɴ'ᴛ ʟᴇᴛ ʏᴏᴜ ꜱʟᴇᴇᴘ"];
+                        let topics = ['may the force be with you!','come on! i can do this','climate change is real!','join the dark side!','Without the confidence, nothing can be accomplished','We love the things we love for what they are','Beauty is not in the face; beauty is a light in the heart','Love For All, Hatred For None','Change the world by being yourself','Every moment is a fresh beginning','What we think, we become','Tough times never last but tough people do','Have enough courage to start and enough heart to finish','Determine your priorities and focus on them','Be so good they can not ignore you','turn right to go left','There is no substitute for hard work','Wanting to be someone else is a waste of who you are','The time is always right to do what is right','The meaning of life is to give life meaning',"Dream is not the thing you see in sleep but is that thing that doesn't let you sleep"];
+                        let topics2 = ['ᴍᴀʏ ᴛʜᴇ ꜰᴏʀᴄᴇ ʙᴇ ᴡɪᴛʜ ʏᴏᴜ!','ᴄᴏᴍᴇ ᴏɴ! ɪ ᴄᴀɴ ᴅᴏ ᴛʜɪꜱ','ᴄʟɪᴍᴀᴛᴇ ᴄʜᴀɴɢᴇ ɪꜱ ʀᴇᴀʟ!','ᴊᴏɪɴ ᴛʜᴇ ᴅᴀʀᴋ ꜱɪᴅᴇ!','ᴡɪᴛʜᴏᴜᴛ ᴛʜᴇ ᴄᴏɴꜰɪᴅᴇɴᴄᴇ, ɴᴏᴛʜɪɴɢ ᴄᴀɴ ʙᴇ ᴀᴄᴄᴏᴍᴘʟɪꜱʜᴇᴅ','ᴡᴇ ʟᴏᴠᴇ ᴛʜᴇ ᴛʜɪɴɢꜱ ᴡᴇ ʟᴏᴠᴇ ꜰᴏʀ ᴡʜᴀᴛ ᴛʜᴇʏ ᴀʀᴇ','ʙᴇᴀᴜᴛʏ ɪꜱ ɴᴏᴛ ɪɴ ᴛʜᴇ ꜰᴀᴄᴇ; ʙᴇᴀᴜᴛʏ ɪꜱ ᴀ ʟɪɢʜᴛ ɪɴ ᴛʜᴇ ʜᴇᴀʀᴛ','ʟᴏᴠᴇ ꜰᴏʀ ᴀʟʟ, ʜᴀᴛʀᴇᴅ ꜰᴏʀ ɴᴏɴᴇ','ᴄʜᴀɴɢᴇ ᴛʜᴇ ᴡᴏʀʟᴅ ʙʏ ʙᴇɪɴɢ ʏᴏᴜʀꜱᴇʟꜰ','ᴇᴠᴇʀʏ ᴍᴏᴍᴇɴᴛ ɪꜱ ᴀ ꜰʀᴇꜱʜ ʙᴇɢɪɴɴɪɴɢ','What we think, we become','ᴛᴏᴜɢʜ ᴛɪᴍᴇꜱ ɴᴇᴠᴇʀ ʟᴀꜱᴛ ʙᴜᴛ ᴛᴏᴜɢʜ ᴘᴇᴏᴘʟᴇ ᴅᴏ','ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ᴄᴏᴜʀᴀɢᴇ ᴛᴏ ꜱᴛᴀʀᴛ ᴀɴᴅ ᴇɴᴏᴜɢʜ ʜᴇᴀʀᴛ ᴛᴏ ꜰɪɴɪꜱʜ','ᴅᴇᴛᴇʀᴍɪɴᴇ ʏᴏᴜʀ ᴘʀɪᴏʀɪᴛɪᴇꜱ ᴀɴᴅ ꜰᴏᴄᴜꜱ ᴏɴ ᴛʜᴇᴍ','ʙᴇ ꜱᴏ ɢᴏᴏᴅ ᴛʜᴇʏ ᴄᴀɴ ɴᴏᴛ ɪɢɴᴏʀᴇ ʏᴏᴜ','ᴛᴜʀɴ ʀɪɢʜᴛ ᴛᴏ ɢᴏ ʟᴇꜰᴛ','ᴛʜᴇʀᴇ ɪꜱ ɴᴏ ꜱᴜʙꜱᴛɪᴛᴜᴛᴇ ꜰᴏʀ ʜᴀʀᴅ ᴡᴏʀᴋ','ᴡᴀɴᴛɪɴɢ ᴛᴏ ʙᴇ ꜱᴏᴍᴇᴏɴᴇ ᴇʟꜱᴇ ɪꜱ ᴀ ᴡᴀꜱᴛᴇ ᴏꜰ ᴡʜᴏ ʏᴏᴜ ᴀʀᴇ','ᴛʜᴇ ᴛɪᴍᴇ ɪꜱ ᴀʟᴡᴀʏꜱ ʀɪɢʜᴛ ᴛᴏ ᴅᴏ ᴡʜᴀᴛ ɪꜱ ʀɪɢʜᴛ','ᴛʜᴇ ᴍᴇᴀɴɪɴɢ ᴏꜰ ʟɪꜰᴇ ɪꜱ ᴛᴏ ɢɪᴠᴇ ʟɪꜰᴇ ᴍᴇᴀɴɪɴɢ',"ᴅʀᴇᴀᴍ ɪꜱ ɴᴏᴛ ᴛʜᴇ ᴛʜɪɴɢ ʏᴏᴜ ꜱᴇᴇ ɪɴ ꜱʟᴇᴇᴘ ʙᴜᴛ ɪꜱ ᴛʜᴀᴛ ᴛʜɪɴɢ ᴛʜᴀᴛ ᴅᴏᴇꜱɴ'ᴛ ʟᴇᴛ ʏᴏᴜ ꜱʟᴇᴇᴘ"];
                         let phrase;
                         let phrase2;
                         let serverData = await serverModel.findOne({guildID:message.guild.id});
@@ -178,10 +178,13 @@ module.exports = {
                                         n = d.getTime();
                                        
                                         let choosen_work_lowercase = phrase2.toLowerCase();
+                                        console.log(choosen_work_lowercase);
+                                        console.log(choosen_work_lowercase);
                                         let chance = 'not done';
                                         const filter = m=> m.content.toLowerCase() === choosen_work_lowercase ;
                                         const collector = message.channel.createMessageCollector({filter,time:1000 * 22});
                                         collector.on('collect',async (m)=>{  
+                                            console.log(m);
                                             console.log(m);
                                             let content = m.content;
                                             let content_lowercase = content.toLowerCase();
@@ -862,7 +865,7 @@ module.exports = {
                         embed.setDescription(`${target}, ${message.author} has challenged you for a typing race. Press yes to accept the challenge`);
                         embed.setColor(`#F1003B`);
                         const m =  await  message.channel.send({embeds:[embed],components:[row]});
-                        const ifilter = (interaction)=> interaction.user.id === target.id;
+                        const ifilter = (interaction)=> interaction.user.id === target.id || message.author.id; 
                         const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
                         collector.on('collect', async i => {
                             console.log(i)
