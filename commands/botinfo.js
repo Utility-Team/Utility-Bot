@@ -36,7 +36,7 @@ module.exports={
                 .setLabel('Utility Premium')
                 .setStyle('LINK')
                 .setEmoji('<:patreonpremium:934410962990141440>')
-                .setURL('https://google.com')
+                .setURL('https://www.patreon.com/Utility?fan_landing=true')
         );
         message.channel.send({embeds:[embed],components:[row]});
     }

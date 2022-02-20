@@ -46,8 +46,9 @@ module.exports = {
                                                     if(item !== 'VR Glasses'){
                                                         const embed = new Discord.MessageEmbed();
                                                         embed.setTitle(`Playing ${item}`);
-                                                        embed.setDescription(`${message.author.username} what do you wanna do?`);
+                                                        embed.setDescription(`${message.author.username}, choose an **activity** from below`);
                                                         embed.setThumbnail(`${message.author.displayAvatarURL()}`);
+                                                        embed.setColor(`#8130EF`);
                                                         const row = new Discord.MessageActionRow()
                                                         .addComponents(
                                                             new Discord.MessageButton()
@@ -75,7 +76,7 @@ module.exports = {
                                                                 let time = Math.floor(Math.random() * 5 + 1);
                                                                 let totalpeople = Math.floor(Math.random() * 100000 + 1);
                                                                 let totalcomments = Math.floor(Math.random() * 10000 + 1);
-                                                                let moneymade = Math.floor(Math.random()*5000+1);
+                                                                let moneymade = Math.floor(Math.random()*2000+1);
                                                                 const embed2 = new Discord.MessageEmbed();
                                                                 embed2.setTitle(`You streamed for ${time} hrs`);
                                                                 embed2.addFields({name:`👀 Total People Watched:`,value:`${totalpeople}`},
@@ -105,7 +106,7 @@ module.exports = {
                                                                 let time = Math.floor(Math.random() * 5 + 1);
                                                                 let totalmission = Math.floor(Math.random() * 10 + 1);
                                                                 let totalkills = Math.floor(Math.random() * 5 + 1);
-                                                                let moneymade = Math.floor(Math.random()*5000+1);
+                                                                let moneymade = Math.floor(Math.random()*2000+1);
                                                                 const embed2 = new Discord.MessageEmbed();
                                                                 embed2.setTitle(`You did gaming for ${time} hrs`);
                                                                 embed2.addFields({name:`Total Missions Completed:`,value:`${totalmission}`},
@@ -135,7 +136,7 @@ module.exports = {
                                                                 let time = Math.floor(Math.random() * 5 + 1);
                                                                 let totalvideos = Math.floor(Math.random() * 5 + 1);
                                                                 let totalthumbnails = Math.floor(Math.random() * 5 + 1);
-                                                                let moneymade = Math.floor(Math.random()*5000+1);
+                                                                let moneymade = Math.floor(Math.random()*2000+1);
                                                                 const embed2 = new Discord.MessageEmbed();
                                                                 embed2.setTitle(`You did editing for ${time} hrs`);
                                                                 embed2.addFields({name:`Total Videos Edited:`,value:`${totalvideos}`},
@@ -168,9 +169,11 @@ module.exports = {
                                                         return;
                                                 }else{
                                                     const embed = new Discord.MessageEmbed();
-                                                        embed.setTitle(`Playing ${item}`);
-                                                        embed.setDescription(`${message.author.username} what do you wanna do?`);
-                                                        embed.setThumbnail(`${message.author.displayAvatarURL()}`);
+                                                    embed.setTitle(`Playing <:vrglass:939429040245334036> ${item}`);
+                                                    embed.addFields({name:`Welcome to Metaverse!`,value:`choose an **activity** from below!`})
+                                                    embed.setFooter(`Fun Fact: this metaverse is not made by facebook`);
+                                                    embed.setThumbnail(`${message.author.displayAvatarURL()}`);
+                                                    embed.setColor(`#6371A9`);
                                                         const row = new Discord.MessageActionRow()
                                                         .addComponents(
                                                             new Discord.MessageButton()
@@ -198,7 +201,7 @@ module.exports = {
                                                                 let time = Math.floor(Math.random() * 5 + 1);
                                                                 let totalpeople = Math.floor(Math.random() * 100000 + 1);
                                                                 let totalcomments = Math.floor(Math.random() * 10000 + 1);
-                                                                let moneymade = Math.floor(Math.random()*5000+1);
+                                                                let moneymade = Math.floor(Math.random()*2000+1);
                                                                 const embed2 = new Discord.MessageEmbed();
                                                                 embed2.setTitle(`You streamed for ${time} hrs`);
                                                                 embed2.addFields({name:`👀 Total People Watched:`,value:`${totalpeople}`},
@@ -228,7 +231,7 @@ module.exports = {
                                                                 let time = Math.floor(Math.random() * 5 + 1);
                                                                 let totalmission = Math.floor(Math.random() * 10 + 1);
                                                                 let totalkills = Math.floor(Math.random() * 5 + 1);
-                                                                let moneymade = Math.floor(Math.random()*5000+1);
+                                                                let moneymade = Math.floor(Math.random()*2000+1);
                                                                 const embed2 = new Discord.MessageEmbed();
                                                                 embed2.setTitle(`You did gaming for ${time} hrs`);
                                                                 embed2.addFields({name:`Total Missions Completed:`,value:`${totalmission}`},
@@ -258,7 +261,7 @@ module.exports = {
                                                                 let time = Math.floor(Math.random() * 5 + 1);
                                                                 let totalvideos = Math.floor(Math.random() * 5 + 1);
                                                                 let totalthumbnails = Math.floor(Math.random() * 5 + 1);
-                                                                let moneymade = Math.floor(Math.random()*5000+1);
+                                                                let moneymade = Math.floor(Math.random()*2000+1);
                                                                 const embed2 = new Discord.MessageEmbed();
                                                                 embed2.setTitle(`You did editing for ${time} hrs`);
                                                                 embed2.addFields({name:`Total Videos Edited:`,value:`${totalvideos}`},
