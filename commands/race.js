@@ -865,7 +865,7 @@ module.exports = {
                         embed.setDescription(`${target}, ${message.author} has challenged you for a typing race. Press yes to accept the challenge`);
                         embed.setColor(`#F1003B`);
                         const m =  await  message.channel.send({embeds:[embed],components:[row]});
-                        const ifilter = (interaction)=> interaction.user.id === target.id || message.author.id; 
+                        const ifilter = (interaction)=> interaction.user.id === target.id; 
                         const collector = m.createMessageComponentCollector({ filter:ifilter, time: 30000 });
                         collector.on('collect', async i => {
                             console.log(i)
