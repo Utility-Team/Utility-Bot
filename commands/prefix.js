@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 const profileModel = require('../models/profileSchema');
+const fs = require('fs');
+const path = require("path");
 module.exports={
   name:'prefix',
   aliases:['prefix','p'],
@@ -20,7 +22,25 @@ module.exports={
           {  
             prefix:args[0]
           }
-          )
+          );
+          var obj;
+         
+          fs.readFile('profileSchema.json', 'utf8', function (err, data) {
+            if (err) throw err;
+            obj = JSON.parse(data);
+         //   prefix = obj.prefix;
+            if(obj.data[String(message.guild.id)]){
+            //  / console.log('yes')
+              console.log(obj.data)
+              obj.data[String(message.guild.id)].prefix = args[0];
+              fs.writeFileSync(path.resolve(__dirname, 'profileSchema.json'), JSON.stringify(obj));
+            }else if(obj[String(message.guild.id)]){
+              obj[String(message.guild.id)].prefix = args[0];
+              fs.writeFileSync(path.resolve(__dirname, 'profileSchema.json'), JSON.stringify(obj));
+            }
+            //console.log(obj);
+          });
+        
           
           const embed = new Discord.MessageEmbed();
           embed.setTitle(`${message.author.username} the prefix of the bot has been set to ${args[0]}`)

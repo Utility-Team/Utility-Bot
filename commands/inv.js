@@ -151,31 +151,31 @@ module.exports={
                                       .addOptions([
                                       {
                                       label:'Food',
-                                      value:'food2',
+                                      value:`${message.author.id}food2`,
                                       description:'shows food items owned by you'
                                       },
                                       {
                                       label:'Tools',
-                                      value:'tools2',
+                                      value:`${message.author.id}tools2`,
                                       description:'shows tools owned by you'
                                       },
                                       {
                                       label:'Hunt , Fish & Dig',
-                                      value:'hunt',
+                                      value:`${message.author.id}hunts2`,
                                       description:'shows items related to hunting & fishing'
                                       },
                                       {
                                       label:'Collectables',
-                                      value:'collectables2',
+                                      value:`${message.author.id}collectables`,
                                       description:'shows collectables items owned by you'
                                   },
                                   {
                                       label:'Gadgets',
-                                      value:'gadgets2'
+                                      value:`${message.author.id}gadgets2`
                                   },
                                   {
                                       label:'Jewellery',
-                                      value:'jewellery2'
+                                      value:`${message.author.id}jewellery2`
                                   }
                                       
                                       ])
@@ -185,48 +185,48 @@ module.exports={
                                   let collector = message.channel.createMessageComponentCollector({filter,time:20000,componentType:"SELECT_MENU"});
                                   collector.on("collect",async (interaction)=>{
                                   
-                                  if(interaction.values[0]=='food2'){
+                                  if(interaction.values[0]==`${message.author.id}food2`){
                                       if(foodembed.fields.length>0){
-                                          await  interaction.reply({embeds:[foodembed]});
+                                          await  interaction.update({embeds:[foodembed]});
                                       }else{
-                                          await interaction.reply({embeds:[foodembed2]});
+                                          await interaction.update({embeds:[foodembed2]});
                                       }
                                   }
-                                  if(interaction.values[0]=='tools2'){
+                                  if(interaction.values[0]==`${message.author.id}tools2`){
                                           if(toolsembed.fields.length>0){
-                                              await interaction.reply({embeds:[toolsembed]});
+                                              await interaction.update({embeds:[toolsembed]});
                                           }else{
-                                              await interaction.reply({embeds:[toolsembed2]});
+                                              await interaction.update({embeds:[toolsembed2]});
                                           }
                                   }
-                                  if(interaction.values[0]=='collectables2'){
+                                  if(interaction.values[0]==`${message.author.id}collectables`){
                                       if(collectableembed.fields.length>0){
-                                          await interaction.reply({embeds:[collectableembed]});
+                                          await interaction.update({embeds:[collectableembed]});
                                       }else{
-                                          await interaction.reply({embeds:[collectableembed2]});
+                                          await interaction.update({embeds:[collectableembed2]});
                                       }
                                   }
-                                  if(interaction.values[0]== 'hunt'){
+                                  if(interaction.values[0]== `${message.author.id}hunts2`){
                                       if(huntfishembed.fields.length>0){
-                                          await interaction.reply({embeds:[huntfishembed]});
+                                          await interaction.update({embeds:[huntfishembed]});
                                       }else{
-                                          await interaction.reply({embeds:[huntfishembed2]});
+                                          await interaction.update({embeds:[huntfishembed2]});
                                       }
                                   }
                                   
-                                  if(interaction.values[0] == 'gadgets2'){
+                                  if(interaction.values[0] == `${message.author.id}gadgets2`){
                                       if(gadgetsembed.fields.length>0){
-                                      await interaction.reply({embeds:[gadgetsembed]});
+                                      await interaction.update({embeds:[gadgetsembed]});
                                       }else{
-                                          await interaction.reply({embeds:[gadgetsembed2]});
+                                          await interaction.update({embeds:[gadgetsembed2]});
                                       }
                                   }
 
-                                  if(interaction.values[0] == 'jewellery2'){
+                                  if(interaction.values[0] == `${message.author.id}jewellery2`){
                                       if(jewelleryembed.fields.length>0){
-                                          await interaction.reply({embeds:[jewelleryembed]});
+                                          await interaction.update({embeds:[jewelleryembed]});
                                       }else{
-                                          await interaction.reply({embeds:[jewelleryembed2]});
+                                          await interaction.update({embeds:[jewelleryembed2]});
                                       }
                                   }
                               
@@ -246,7 +246,13 @@ module.exports={
                         }else{
                             creditpoints = 0;
                         }
-                        if(userData.fishingrod === 0 && userData.huntingrifle === 0 && userData.lock === 0 && creditpoints === 0){
+                        let shovel;
+                        if(userData.shovel){
+                            shovel = userData.shovel;
+                        }else{
+                            shove = 0;
+                        }
+                        if(userData.fishingrod === 0 && userData.huntingrifle === 0 && userData.lock === 0 && creditpoints === 0 && shovel === 0){
                             let embed = new Discord.MessageEmbed();
                             embed.setTitle(`${message.author.username}'s inventory`);
                             embed.setThumbnail(`${avatar}`);
@@ -261,7 +267,8 @@ module.exports={
                             embed.addFields({name:`🎣 Fishing Rod`,value:`${userData.fishingrod}`},
                              {name:`<:rifle:883578413888184350> Hunting Rifle`,value:`${userData.huntingrifle}`},
                              {name:`🔒 Lock`,value:`${userData.lock}`},
-                             {name:`Credit Points:`,value:`${creditpoints}`}
+                             {name:`<:shovel:945324327555965008> Shovel`,value:`${userData.shovel}`},
+                             {name:`Credit Points:`,value:`${creditpoints}`},
                             );
                             embed.setFooter(`Requested by ${message.author.username}`,avatar);
                             embed.setTimestamp();
@@ -424,46 +431,46 @@ module.exports={
                                           
                                           if(interaction.values[0]=='fooditems'){
                                               if(foodembed.fields.length>0){
-                                                  await  interaction.reply({embeds:[foodembed]});
+                                                  await  interaction.update({embeds:[foodembed]});
                                               }else{
-                                                  await interaction.reply({embeds:[foodembed2]});
+                                                  await interaction.update({embeds:[foodembed2]});
                                               }
                                           }
                                           if(interaction.values[0]=='toolitems'){
                                                   if(toolsembed.fields.length>0){
-                                                      await interaction.reply({embeds:[toolsembed]});
+                                                      await interaction.update({embeds:[toolsembed]});
                                                   }else{
-                                                      await interaction.reply({embeds:[toolsembed2]});
+                                                      await interaction.update({embeds:[toolsembed2]});
                                                   }
                                           }
                                           if(interaction.values[0]=='collectableitems'){
                                               if(collectableembed.fields.length>0){
-                                                  await interaction.reply({embeds:[collectableembed]});
+                                                  await interaction.update({embeds:[collectableembed]});
                                               }else{
-                                                  await interaction.reply({embeds:[collectableembed2]});
+                                                  await interaction.update({embeds:[collectableembed2]});
                                               }
                                           }
                                           if(interaction.values[0]== 'hunt'){
                                               if(huntfishembed.fields.length>0){
-                                                  await interaction.reply({embeds:[huntfishembed]});
+                                                  await interaction.update({embeds:[huntfishembed]});
                                               }else{
-                                                  await interaction.reply({embeds:[huntfishembed2]});
+                                                  await interaction.update({embeds:[huntfishembed2]});
                                               }
                                           }
                                           
                                           if(interaction.values[0] == 'gadgetitems'){
                                               if(gadgetsembed.fields.length>0){
-                                              await interaction.reply({embeds:[gadgetsembed]});
+                                              await interaction.update({embeds:[gadgetsembed]});
                                               }else{
-                                                  await interaction.reply({embeds:[gadgetsembed2]});
+                                                  await interaction.update({embeds:[gadgetsembed2]});
                                               }
                                           }
 
                                           if(interaction.values[0] == 'jewelleryitems'){
                                               if(jewelleryembed.fields.length>0){
-                                                  await interaction.reply({embeds:[jewelleryembed]});
+                                                  await interaction.update({embeds:[jewelleryembed]});
                                               }else{
-                                                  await interaction.reply({embeds:[jewelleryembed2]});
+                                                  await interaction.update({embeds:[jewelleryembed2]});
                                               }
                                           }
                                       

@@ -134,43 +134,51 @@ module.exports ={
                 timeup2 =30;
               }
               if(n- lastdig >= timeup){
-                var d2 = new Date();
-                var n2 = d2.getTime();
-                const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                  lastdig:n2
-                })
-                let dig_chance = Math.floor(Math.random() * 2);
-                if(dig_chance === 0){    
-                message.channel.send(`${message.author} , You found nothing but Nice try!`);
-                }
-                
-                if(dig_chance === 1){
-                let random_chance = Math.floor(Math.random()*5);
-                if(random_chance === 0){
-                   update('dirt','<:dirt:904039581224153098>','dig');
-                }
-                if(random_chance === 1){
-                    update('boots','👢','dig');
-                 
-                }
-                if(random_chance === 2){
-                    update('grass','<:grass:904040046049505381>','dig');
-                }
-                if(random_chance === 3){
-                    let random_number = Math.floor(Math.random() * 1000);
-                    const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                    $inc:{
-                        networth:random_number,
-                        wallet:random_number
+                if(userData.shovel){
+                    if(userData.shovel>=1){
+                          var d2 = new Date();
+                          var n2 = d2.getTime();
+                          const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                            lastdig:n2
+                          })
+                          let dig_chance = Math.floor(Math.random() * 2);
+                          if(dig_chance === 0){    
+                          message.channel.send(`${message.author} , You found nothing but Nice try!`);
+                          }
+                          
+                          if(dig_chance === 1){
+                          let random_chance = Math.floor(Math.random()*5);
+                          if(random_chance === 0){
+                            update('dirt','<:dirt:904039581224153098>','dig');
+                          }
+                          if(random_chance === 1){
+                              update('boots','👢','dig');
+                          
+                          }
+                          if(random_chance === 2){
+                              update('grass','<:grass:904040046049505381>','dig');
+                          }
+                          if(random_chance === 3){
+                              let random_number = Math.floor(Math.random() * 1000);
+                              const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                              $inc:{
+                                  networth:random_number,
+                                  wallet:random_number
+                              }
+                              });
+                          
+                          message.channel.send(`${message.author} , You found 🥫garbage and got ${random_number} for it!`);
+                  
+                          }
+                          if(random_chance === 4){
+                              update('ancient coin','<:ancientcoin:903586746640519178>','dig');
+                          }
+                          }
+                    }else{
+                      message.channel.send(`${message.author}, You don't have shovel for digging. You can buy it using buy command`);
                     }
-                    });
-                
-                message.channel.send(`${message.author} , You found 🥫garbage and got ${random_number} for it!`);
-        
-                }
-                if(random_chance === 4){
-                    update('ancient coin','<:ancientcoin:903586746640519178>','dig');
-                }
+                }else{
+                  message.channel.send(`${message.author}, You don't have shovel for digging. You can buy it using buy command`);
                 }
               }else{
                 var msec = n - lastdig;

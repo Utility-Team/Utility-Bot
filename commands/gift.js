@@ -483,6 +483,7 @@ module.exports={
                                              totalitemsreceived:number
                                          }
                                      });
+                                     return;
                                     
                                 }else{
                                     message.channel.send(`${message.author}, you don't have that many lock to gift`);
@@ -517,6 +518,7 @@ module.exports={
                                      totalitemsreceived:1
                                  }
                              });
+                             return;
                             
                         }else{
                             message.channel.send(`${message.author}, you don't have that many lock to gift`);
@@ -641,6 +643,7 @@ module.exports={
                                                          totalitemsreceived:number
                                                      }
                                                  });
+                                                 return;
                                                 
                                             }else{
                                                 message.channel.send(`${message.author}, you don't have that many hunting rifle to gift`);
@@ -676,6 +679,7 @@ module.exports={
                                                      totalitemsreceived:1
                                                  }
                                              });
+                                             return;
                                         }else{
                                             message.channel.send(`${message.author}, you don't have a hunting rifle to gift`);
 
@@ -710,6 +714,7 @@ module.exports={
                                                         totalitemsreceived:number
                                                     }
                                                 });
+                                                return;
                                             }else{
                                                 message.channel.send(`${message.author}, you don't have a fishing rod to gift`);
                                             }
@@ -738,12 +743,13 @@ module.exports={
                                                     totalitemsdonated:1
                                                 }
                                              });
-                                             const response2 = await userModel.findOneAndUpdate({userID:target.id},{
+                                            const response2 = await userModel.findOneAndUpdate({userID:target.id},{
                                                  $inc:{
                                                      fishingrod:1,
                                                      totalitemsreceived:1
                                                  }
                                              });
+                                            return;
                                         }else{
                                             message.channel.send(`${message.author}, you don't have a fishing rod to gift`);
                                         }
@@ -780,6 +786,7 @@ module.exports={
                                             embed2.setDescription(`${message.author}, You have successfully gifted ${number} cryptocoin to ${target}`);
                                             embed2.setTimestamp();
                                             message.channel.send({embeds:[embed2]});
+                                            return;
 
                                         }else{
                                             const embed = new Discord.MessageEmbed();
@@ -818,6 +825,8 @@ module.exports={
                                         embed2.setDescription(`${message.author}, You have successfully gifted 1 cryptocoin to ${target}`);
                                         embed2.setTimestamp();
                                         message.channel.send({embeds:[embed2]});
+
+                                        return;
                                     }else{
                                         const embed = new Discord.MessageEmbed();
                                         embed.setTitle(`${message.author.username}, You don't have 1 cryptocoin to gift`);
@@ -874,6 +883,7 @@ module.exports={
                                      totalitemsreceived:1
                                  }
                              });
+                             return;
                         }else{
                             message.channel.send(`${message.author}, you don't have a boat to gift`);
                         }
@@ -906,6 +916,7 @@ module.exports={
                                  boat:1
                              }
                          });
+                         return;
                     }else{
                         message.channel.send(`${message.author}, you don't have a boat to gift`);
                     }
@@ -937,6 +948,7 @@ module.exports={
                                      totalitemsreceived:1
                                  }
                              });
+                             return;
                         }else{
                             message.channel.send(`${message.author}, you don't have a credit point to gift`);
                         }
@@ -971,6 +983,7 @@ module.exports={
                                  totalitemsreceived:1
                              }
                          });
+                         return;
                     }else{
                         message.channel.send(`${message.author}, you don't have a credit points to gift`);
                     }
@@ -979,6 +992,7 @@ module.exports={
                 }
                }else{
                    message.channel.send(`${message.author}, that item is not available to gift`);   
+                   return;
                }
 
 

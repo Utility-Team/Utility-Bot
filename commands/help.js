@@ -35,17 +35,66 @@ module.exports={
       {name:`${prefix}hackban userid`,value:`bans user before joining the server`},
       {name:`${prefix}unban userid`,value:`unbans a user`},
       {name:`${prefix}slowmode number`,value:`sets the slowmode of a channel for the number of seconds`},{name:`${prefix}mute @name time`,value:`mutes the mentioned person for the given time exmaple - ${prefix}mute @abhishek 10m `},
-      {name:`${prefix}unmute @name`,value:`unmutes the mentioned user`},{name:`${prefix}cc`,value:`deletes all the chats of the current channel`},
+      {name:`${prefix}unmute @name`,value:`unmutes the mentioned user`},
+      );
+      embed.setTimestamp();
+      embed.setColor(`#404EED`);
+      embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
+      
+      const embed2 = new Discord.MessageEmbed();
+      embed2.setTitle(`Utility moderation commands - Use prefix ${prefix}`);
+      embed2.addFields({name:`${prefix}cc`,value:`deletes all the chats of the current channel`},
       {name:`${prefix}warn @name reason`,value:`warns the mentioned user for the given reason`},
       {name:`${prefix}warns @name`,value:`shows total number of warnings a person has`},
       {name:`${prefix}unwarn @name number`,value:`removes a particular warn of the user`},
       {name:`${prefix}channeladd userid`,value:`adds a particular user to the current channel`},
       {name:`${prefix}channelremove userid`,value:`removes a particular user from the current channel`}
       );
-      embed.setTimestamp();
-      embed.setColor(`#404EED`);
-      embed.setFooter(`Requested by ${message.author.username}`,message.author.displayAvatarURL());
-      message.channel.send({embeds:[embed]});
+      embed2.setTimestamp();
+      embed2.setColor(`#404EED`);
+      embed2.setFooter(`Requested by ${message.author.username}`,message.author.display)
+
+      let embeds = [embed,embed2]; 
+      const row = new Discord.MessageActionRow()
+      .addComponents(
+          new Discord.MessageButton()
+              .setCustomId(`page1${message.author.id}`)
+              .setLabel('<')
+              .setStyle('PRIMARY'),
+          new Discord.MessageButton()
+              .setCustomId(`page2${message.author.id}`)
+              .setLabel('>')
+              .setStyle('PRIMARY'),
+          
+      );
+      const m = await message.channel.send({embeds:[embed],components:[row]});
+      const ifilter = i => i.user.id === message.author.id;
+      const collector = m.createMessageComponentCollector({ filter:ifilter, time: 45000 });
+      let val = 0;
+      collector.on('collect', async i => {
+          
+          if (i.customId === `page1${message.author.id}`) {
+            if(val > 0){            
+              val = val - 1;
+            }else{
+              val = 0;
+            }
+            await i.update({embeds:[embeds[val]]});       
+          }
+          if(i.customId=== `page2${message.author.id}`){
+            if(val < embeds.length - 1){
+              val = val + 1;
+              console.log('val ' + val);
+             }else if(val === 4){
+               console.log('val' + val);
+               val = 0;
+             }
+            await i.update({embeds:[embeds[val]]});
+
+          }
+      });
+
+      collector.on('end', collected => console.log(`Collected ${collected.size} items`));
     }else if(args[0] === 'fun'){
       var embed = new Discord.MessageEmbed();
       embed.setTitle(`Utility fun commands - Use Prefix ${prefix}`);

@@ -7,7 +7,8 @@ module.exports = {
     const embed = new Discord.MessageEmbed();
     embed.setTitle('Here is about the bot')
     embed.setDescription(`My name is Utility and i am a discord bot made by my creator abhishekkholiya#5152 who is a software developer. You can type ${profileData.prefix}help to know what all i can do and for getting my invite link you can type ${profileData.prefix}inviteme`)
-    embed.setFooter('Thanks for Choosing Utility')
+    embed.setFooter('Thanks for Choosing Utility','https://i.ibb.co/2vqdQ0Q/1629214424065.png');
+    embed.setColor(`#404EED`);
     message.channel.send({embeds:[embed]});
   }
 }

@@ -35,7 +35,7 @@ module.exports = {
                         
                     }else{
                         const response = await userModel.findOneAndUpdate({userID:message.author.id},{
-                            avatar:message.author.displayAvatarURL()
+                            avatar:''
                         });
                         const embed = new Discord.MessageEmbed();
                         embed.setAuthor(`${message.author.username}, your avatar has been set successfully!`);

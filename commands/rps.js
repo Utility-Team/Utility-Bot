@@ -320,9 +320,10 @@ module.exports = {
                         
                             let who_won = '';
                             const embed = new Discord.MessageEmbed();
-                            embed.setAuthor(`Rock Paper Scissor`,avatar);
+                            embed.setTitle(`<:rockpaperscissors:945317106071769159> Rock Paper Scissor`);
                             embed.setDescription('**Choose one and wisely between rock , paper & scissor**');
                             embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                            embed.setColor('#8CD96B');
                             embed.setTimestamp();
             
                             const row = new Discord.MessageActionRow()
@@ -468,9 +469,10 @@ module.exports = {
                     
                         let who_won = '';
                         const embed = new Discord.MessageEmbed();
-                        embed.setAuthor(`Rock Paper Scissor`,avatar);
+                        embed.setTitle(`<:rockpaperscissors:945317106071769159> Rock Paper Scissor`);
                         embed.setDescription('**Choose one and wisely between rock , paper & scissor**');
                         embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                        embed.setColor('#8CD96B');
                         embed.setTimestamp();
         
                         const row = new Discord.MessageActionRow()
@@ -628,9 +630,10 @@ module.exports = {
                     let choice = '';
                     let who_won = '';
                     const embed = new Discord.MessageEmbed();
-                    embed.setAuthor(`Rock Paper Scissor`,avatar);
+                    embed.setTitle(`<:rockpaperscissors:945317106071769159> Rock Paper Scissor`);
                     embed.setDescription(`${message.author},**choose one and wisely between rock , paper & scissor**`);
                     embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                    embed.setColor('#8CD96B');
                     embed.setTimestamp();
 
                     const row = new Discord.MessageActionRow()
@@ -670,11 +673,11 @@ module.exports = {
                     );
 
                     const embed2 = new Discord.MessageEmbed();
-                    embed2.setAuthor(`Rock Paper Scissor`,target.displayAvatarURL());
+                    embed2.setTitle(`<:rockpaperscissors:945317106071769159> Rock Paper Scissor`);
                     embed2.setDescription(`${target},**choose one and wisely between rock , paper & scissor**`);
                     embed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                    embed2.setColor('#8CD96B');
                     embed2.setTimestamp();
-                //  message.channel.send({embeds:[embed],components:[row]})
                     const m = await message.reply({embeds:[embed],components:[row]});
                     const m2 = await message.channel.send({embeds:[embed2],components:[row2]});
                     const ifilter = i => i.user.id === message.author.id;

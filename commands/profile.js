@@ -243,6 +243,7 @@ module.exports = {
                          {name:'Total Work Hours:',value:`${targetData.totalwork}`}
                          );
                          embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                         embed.setColor('#FFFFFF');
                          embed.setTimestamp();
                       
                          let totalmatches = targetData.totalrps;
@@ -258,6 +259,7 @@ module.exports = {
                          {name:`Win %:`,value:`${winpercent}`}
                          );
                          rpsembed.setFooter(`Requested by ${message.author.username}`,avatar);
+                         rpsembed.setColor('#8CD96B');
                          rpsembed.setTimestamp();
 
                          let totalmoneydonated;
@@ -293,6 +295,7 @@ module.exports = {
                           {name:`Total Items Received:`,value:`${totalitemsreceived}`}
                           );
                           sharingembed.setFooter(`Requested by ${message.author.username}`,avatar);
+                          sharingembed.setColor('#02D9FF');
                           sharingembed.setTimestamp();
 
                           const row = new Discord.MessageActionRow().addComponents(
@@ -300,22 +303,30 @@ module.exports = {
                              .setCustomId('option')
                              .setPlaceholder('Other Stats...')
                              .addOptions([
-                            
-                               {
-                               label:'Gamble Stats',
-                               value:'gamble',
-                               description:'shows your gamble stats'
-                             },
-                             {
-                              label:'Rps Stats',
-                              value:'rps',
-                              description:'shows your rps stats'
-                            },
-                            {
-                              label:'Sharing Stats',
-                              value:'sharingstats',
-                              description:'shows your sharing stats'
-                            },
+                              {
+                                label:'Overall Stats',
+                                value:'overall',
+                                description:'shows your overall stats',
+                                emoji:'<:profile:945317106809974784>'
+                              },   
+                              {
+                                label:'Gamble Stats',
+                                value:'gamble',
+                                description:'shows your gamble stats',
+                                emoji:'<:lottery:938436846403346492>'
+                              },
+                              {
+                                label:'Rps Stats',
+                                value:'rps',
+                                description:'shows your rps stats',
+                                emoji:'<:rockpaperscissors:945317106071769159>'
+                              },
+                              {
+                                label:'Sharing Stats',
+                                value:'sharingstats',
+                                description:'shows your sharing stats',
+                                emoji:'<:sharingstats:945317106570907729>'
+                              },
                              ])
                            );
                            message.channel.send({embeds:[embed],components:[row]});
@@ -333,17 +344,18 @@ module.exports = {
                                 {name:`Gambles Tie`,value:`${targetnew.tiegamble}`}
                                 );
                                 gambleembed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                                gambleembed2.setColor('#FF0000');
                                 gambleembed2.setTimestamp();
-                                interaction.reply({embeds:[gambleembed2]});
+                                interaction.update({embeds:[gambleembed2]});
                               }
                             if(interaction.values[0]=='overall'){
-                                interaction.reply({embeds:[embed]});
+                                interaction.update({embeds:[embed]});
                             }
                             if(interaction.values[0]=='rps'){
-                                interaction.reply({embeds:[rpsembed]});
+                                interaction.update({embeds:[rpsembed]});
                             }
                             if(interaction.values[0] == 'sharingstats'){
-                              interaction.reply({embeds:[sharingembed]});
+                              interaction.update({embeds:[sharingembed]});
                             }
                           });   
                           collector.on('end', collected => console.log(`Collected ${collected.size} items`));
@@ -407,6 +419,7 @@ module.exports = {
                   {name:'Total Work Hours:',value:`${userData.totalwork}`},
                   );
                   embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                  embed.setColor('#FFFFFF');
                   embed.setTimestamp();
               
                   let totalmatches = userData.totalrps;
@@ -423,6 +436,7 @@ module.exports = {
                   {name:`Win %:`,value:`${winpercent}`}
                   );
                   rpsembed.setFooter(`Requested by ${message.author.username}`,avatar);
+                  rpsembed.setColor('#8CD96B');
                   rpsembed.setTimestamp();
                   
                   let totalmoneydonated;
@@ -458,6 +472,7 @@ module.exports = {
                   {name:`Total Items Received:`,value:`${totalitemsreceived}`}
                   );
                   sharingembed.setFooter(`Requested by ${message.author.username}`,avatar);
+                  sharingembed.setColor('#02D9FF');
                   sharingembed.setTimestamp();
 
                   const row = new Discord.MessageActionRow().addComponents(
@@ -465,21 +480,29 @@ module.exports = {
                     .setCustomId('option')
                     .setPlaceholder('Other Stats...')
                     .addOptions([
-                    
+                      {
+                        label:'Overall Stats',
+                        value:'overall',
+                        description:'shows your overall stats',
+                        emoji:'<:profile:945317106809974784>'
+                      },   
                       {
                       label:'Gamble Stats',
                       value:'gamble',
-                      description:'shows your gamble stats'
+                      description:'shows your gamble stats',
+                      emoji:'<:lottery:938436846403346492>'
                     },
                     {
                     label:'Rps Stats',
                     value:'rps',
-                    description:'shows your rps stats'
+                    description:'shows your rps stats',
+                    emoji:'<:rockpaperscissors:945317106071769159>'
                   },
                   {
                     label:'Sharing Stats',
                     value:'sharingstats',
-                    description:'shows your sharing stats'
+                    description:'shows your sharing stats',
+                    emoji:'<:sharingstats:945317106570907729>'
                   },
                     ])
                   );
@@ -497,18 +520,19 @@ module.exports = {
                         {name:`Gambles Lost:`,value:`${targetnew.lostgamble}`},
                         {name:`Gambles Tie:`,value:`${targetnew.tiegamble}`}
                         );;
-                        gambleembed2.setFooter(`Requested by ${message.author.username}`,avatar)
+                        gambleembed2.setFooter(`Requested by ${message.author.username}`,avatar);
+                        gambleembed2.setColor('#FF0000');
                         gambleembed2.setTimestamp();
-                        interaction.reply({embeds:[gambleembed2]});
+                        interaction.update({embeds:[gambleembed2]});
                     }
                     if(interaction.values[0]=='overall'){
-                      interaction.reply({embeds:[embed]});
+                      interaction.update({embeds:[embed]});
                     }
                     if(interaction.values[0]=='rps'){
-                      interaction.reply({embeds:[rpsembed]});
+                      interaction.update({embeds:[rpsembed]});
                     }
                     if(interaction.values[0] === 'sharingstats'){
-                      interaction.reply({embeds:[sharingembed]});
+                      interaction.update({embeds:[sharingembed]});
                     }
                   });   
                   collector.on('end', collected => console.log(`Collected ${collected.size} items`));

@@ -417,6 +417,63 @@ module.exports = {
                     message.channel.send(`${message.author} You don't have enough coins in your wallet`);
                   }
                 }
+                }else if(argsone_name === 'shovel'){
+                  var shovel = botData.shovelvalue;
+                  let number = args[2];
+                  var totalcost = shovel * number;
+                  if(number){
+                  if(!isNaN(number) && Math.sign(number) === 1){
+                    if(number % 1=== 0){
+                      if(userbal >= shovel * args[2]){
+                        const embed = new Discord.MessageEmbed();
+                        embed.setAuthor(`✅ Successfully Purchased`);
+                        embed.setColor(`#30CC71`);
+                        embed.setDescription(`You have successfully purchased **${number}** <:shovel:945324327555965008> Shovel
+                        `);
+                        embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                        embed.setTimestamp();
+                        message.channel.send({embeds:[embed]});
+                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                          $inc:{
+                            networth:-totalcost,
+                            wallet:-totalcost,
+                            shovel:number
+                          }
+                        });
+                      }else{
+                          message.channel.send(`${message.author} You don't have enough coins in your wallet`);
+                      }
+                    }else{
+                      const embed = new Discord.MessageEmbed();
+                      embed.setTitle(`${message.author.username}, Please enter a valid number!`);
+                      message.channel.send({embeds:[embed]});
+                    }
+                  }else{
+                    const embed = new Discord.MessageEmbed();
+                    embed.setTitle(`${message.author.username}, Please enter a valid number!`);
+                    message.channel.send({embeds:[embed]});
+                  }
+                }else{
+                  if(userbal >= shovel){
+                    const embed = new Discord.MessageEmbed();
+                        embed.setAuthor(`✅ Successfully Purchased`);
+                        embed.setColor(`#30CC71`);
+                        embed.setDescription(`You have successfully purchased **1** <:shovel:945324327555965008> Shovel
+                        `);
+                        embed.setFooter(`Requested by ${message.author.username}`,avatar);
+                        embed.setTimestamp();
+                        message.channel.send({embeds:[embed]});
+                        const response = await userModel.findOneAndUpdate({userID:message.author.id},{
+                          $inc:{
+                            networth:-shovel,
+                            wallet:-shovel,
+                            shovel:1
+                          }
+                        });
+                  }else{
+                    message.channel.send(`${message.author} You don't have enough coins in your wallet`);
+                  }
+                }
                 }else if(argsone_name ==='fishing' && argstwo_name === 'rod'){
                   var fishingrod = botData.fishingpole;
                   let number = args[2];

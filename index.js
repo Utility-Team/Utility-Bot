@@ -6,6 +6,7 @@ const client = new Client({
 const mongoose = require('mongoose');
 var prefix = ';';
 const fs = require('fs');
+const path = require('path');
 const profileModel = require('./models/profileSchema');
 const userModel = require('./models/userSchema');
 const fetch = require("node-fetch");    
@@ -80,6 +81,8 @@ client.on('guildCreate', async guild => {
       console.log(channel.permissionsFor(guild.me).has('SEND_MESSAGES'));
       await channel.send({embeds:[embed]});
     }
+    //const fs = require('fs');
+
 })
 client.on('guildMemberAdd',async member => {
 
@@ -131,7 +134,7 @@ client.on('guildMemberAdd',async member => {
           if(n2 - memberData.lastmuted < memberData.mutedfor){
             let mutedRole = member.guild.roles.cache.find(role => role.name === 'Muted');
             if(mutedRole){
-              console.log('here 3 comes')
+            
               member.roles.add(mutedRole);
             }
           }
@@ -232,22 +235,24 @@ client.on('messageDelete', async(message, channel)=>{
     console.log('Test, a message was deleted.');
     const profileData = await profileModel.findOne({"guildID":message.guild.id});
     console.log(profileData);
-    const channelID = profileData.logschannel;
-    const logs = message.guild.channels.cache.find(i=>i.id ===channelID);
-    if(logs){
-      
-    if(message && message.author.id !== client.user.id){
-          if(!message.author.bot){
-                const embed = new Discord.MessageEmbed();
-                embed.setTitle(`Message Author: ${message.author.username}`);
-                embed.setAuthor(`Message Deleted`,message.author.displayAvatarURL());
-                embed.addFields({name:`Channel:`,value:`<#${message.channel.id}>`},{name:`Deleted Message`,value:`${message.content}`});
-                embed.setTimestamp();
-                embed.setColor('#ED4245');
-                embed.setFooter(`User id: ${message.author.id}`);
-                logs.send({embeds:[embed]});
+    if(profileData){
+      const channelID = profileData.logschannel;
+      const logs = message.guild.channels.cache.find(i=>i.id ===channelID);
+      if(logs){
+          
+        if(message && message.author.id !== client.user.id){
+              if(!message.author.bot){
+                    const embed = new Discord.MessageEmbed();
+                    embed.setTitle(`Message Author: ${message.author.username}`);
+                    embed.setAuthor(`Message Deleted`,message.author.displayAvatarURL());
+                    embed.addFields({name:`Channel:`,value:`<#${message.channel.id}>`},{name:`Deleted Message`,value:`${message.content}`});
+                    embed.setTimestamp();
+                    embed.setColor('#ED4245');
+                    embed.setFooter(`User id: ${message.author.id}`);
+                    logs.send({embeds:[embed]});
+              }
           }
-        }
+      }
     }
 });
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
@@ -265,25 +270,26 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 });
 client.on('messageUpdate', async (oldMessage, newMessage) => {
     const profileData = await profileModel.findOne({"guildID":oldMessage.guild.id});
-    
-    const channelID = profileData.logschannel
-    const leave_new = oldMessage.guild.channels.cache.find(i=>i.id ===channelID);
-    if(leave_new){
-      if(oldMessage && oldMessage.author.id !== client.user.id && !oldMessage.author.bot){
+    if(profileData){
+      const channelID = profileData.logschannel
+      const leave_new = oldMessage.guild.channels.cache.find(i=>i.id ===channelID);
+      if(leave_new){
+        if(oldMessage && oldMessage.author.id !== client.user.id && !oldMessage.author.bot){
 
-        const embed = new Discord.MessageEmbed();
-        embed.setTitle(`Message Author: ${oldMessage.author.username}`);
-        embed.setAuthor(`Message Edited`,oldMessage.author.displayAvatarURL());
-        embed.addFields(
-            {name:`Channel:`,value:`<#${oldMessage.channel.id}>`},
-            {name:`Old Message`,value:`${oldMessage}`},
-            {name:`New Message`,value:`${newMessage}`},
-        );
-   
-        embed.setTimestamp();
-        embed.setColor('#ED4245');
-        embed.setFooter(`User id: ${oldMessage.author.id}`);
-        leave_new.send({embeds:[embed]});
+          const embed = new Discord.MessageEmbed();
+          embed.setTitle(`Message Author: ${oldMessage.author.username}`);
+          embed.setAuthor(`Message Edited`,oldMessage.author.displayAvatarURL());
+          embed.addFields(
+              {name:`Channel:`,value:`<#${oldMessage.channel.id}>`},
+              {name:`Old Message`,value:`${oldMessage}`},
+              {name:`New Message`,value:`${newMessage}`},
+          );
+    
+          embed.setTimestamp();
+          embed.setColor('#ED4245');
+          embed.setFooter(`User id: ${oldMessage.author.id}`);
+          leave_new.send({embeds:[embed]});
+        }
       }
     }
     console.log(oldMessage.content);
@@ -686,33 +692,33 @@ client.on('messageCreate', async (message)=>{
   message.channel.send({embeds:[embed]});
   }
 }
-// if(message.mentions.has(client.user)&& !message.content.endsWith('prefix') && message.content.includes('prefix')){
-//     if(message.member.permissions.has('ADMINISTRATOR')){
+if(message.mentions.has(client.user)&& !message.content.endsWith('prefix') && message.content.includes('prefix')){
+    if(message.member.permissions.has('ADMINISTRATOR')){
        
-//        let msg =    message.content.replace(`<@!${client.user.id}> prefix`,'');
+       let msg =    message.content.replace(`<@!${client.user.id}> prefix`,'');
       
          
-//       //  msg.replace(/^\s+|\s+$/gm,'');
+      //  msg.replace(/^\s+|\s+$/gm,'');
       
-//         console.log('replace with' + msg);
-//         const profileData2 = await profileModel.findOne({"guildID":message.guild.id});
-//         const newprefix = profileData2.prefix;  
-//         if(profileData2){
-//           const response = await profileModel.findOneAndUpdate({"guildID":message.guild.id},
-//           { 
-//             prefix:msg
-//           }
-//           );
-//           const embed = new Discord.MessageEmbed();
-//           embed.setTitle(`${message.author.username} the prefix of the bot has been set to ${msg}`)
-//           message.channel.send({embeds:[embed]});
-//         }else{
-//           const embed = new Discord.MessageEmbed();
-//           embed.setTitle(`${message.author.username}, You don't have the perms to change the prefix`);
-//           message.channel.send({embeds:[embed]});
-//         }
-//  }
-// }   
+        console.log('replace with' + msg);
+        const profileData2 = await profileModel.findOne({"guildID":message.guild.id});
+        const newprefix = profileData2.prefix;  
+        if(profileData2){
+          const response = await profileModel.findOneAndUpdate({"guildID":message.guild.id},
+          { 
+            prefix:msg
+          }
+          );
+          const embed = new Discord.MessageEmbed();
+          embed.setTitle(`${message.author.username} the prefix of the bot has been set to ${msg}`)
+          message.channel.send({embeds:[embed]});
+        }else{
+          const embed = new Discord.MessageEmbed();
+          embed.setTitle(`${message.author.username}, You don't have the perms to change the prefix`);
+          message.channel.send({embeds:[embed]});
+        }
+ }
+}   
  if(message.author){
      let userData = await userModel.findOne({partner:message.author.id});
      if(userData){
@@ -726,23 +732,8 @@ client.on('messageCreate', async (message)=>{
      }
  } 
 
+ 
 
- if(message.guild){
-  let profileData = await profileModel.findOne({guildID:message.guild.id});
-  if(profileData){
-    prefix = profileData.prefix
-  }else{
-     let profile = await profileModel.create({
-            guildID: message.guild.id,
-            prefix:';',
-            logschannel:'',
-            newschannel:''
-           });
-           profile.save()
-     var findData =  await profileModel.findOne({guildID: message.guild.id})
-    prefix = findData.prefix
-  }
-}
     
     if(!message.content.startsWith(prefix) || message.author.bot) return;
  

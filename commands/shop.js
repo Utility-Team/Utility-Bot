@@ -64,7 +64,6 @@ module.exports={
         })
         let diamond = botdata.diamondvalue;
         let trophy = botdata.trophyvalue;
-        let key = botdata.keyvalue;
         let gold = botdata.goldvalue;
         let silver = botdata.silvervalue;
         let pizza = botdata.pizzavalue;
@@ -90,6 +89,7 @@ module.exports={
         let pcvalue = botdata.pcvalue;
         let vrglassesvalue = botdata.vrglassesvalue;
         let avatar;
+        let shovel = botdata.shovelvalue;
         if(userData.avatar){
           if(userData.avatar !== '' && userData.premium === 'enable'){
             avatar = userData.avatar;
@@ -100,31 +100,31 @@ module.exports={
           avatar = message.author.displayAvatarURL();
         }
         const embed = new Discord.MessageEmbed();
-        embed.setTitle(`Items available to Shop!`);
+        embed.setTitle(`Items available to <:shop:945330412320882698> Shop!`);
         embed.addFields(
         {name:`💍 Diamond Ring - <:uc:922720730272137256> ${diamond}`,value:`Perfect Gift for the crush of the Rich kids!`},
         {name:`🏆 Gold Trophy - <:uc:922720730272137256> ${trophy}`,value:`This is a Gold trophy only the kids richer than rich kids can own this.`},
-        {name:`🔑 key - <:uc:922720730272137256> ${key}`,value:`This key is the key to the mansion`},
         {name:`🥇Gold Medal - <:uc:922720730272137256> ${gold}`,value:`This is a gold medal only the rich kids can own this.`},
         {name:`🥈Silver Medal - <:uc:922720730272137256> ${silver}`,value:`This is the medal for the kids who are less rich than the rich kids`},
         {name:`:lock: Lock - <:uc:922720730272137256> ${lock}`,value:`This item saves you from getting robbed.`},
-        {name:`<:rifle:883578413888184350> Hunting Rifle - <:uc:922720730272137256> ${rifle}`,value:`This is the gun you need for hunting!`},
+        {name:`<:huntingrifle:945324006905610341> Hunting Rifle - <:uc:922720730272137256> ${rifle}`,value:`This is the gun you need for hunting!`},
         {name:`:fishing_pole_and_fish: Fishing rod - <:uc:922720730272137256> ${fishingrod}`,value:`This is the rod you need for fishing!`},
-        {name:`<:boat:904243050279235675> Boat - <:uc:922720730272137256> ${boat} `,value:`This is the boat for finding treasure.`},   
-        {name:`<:creditpoint:925956240209772564> Credit Points - <:uc:922720730272137256> 20`,value:`use credit points to increase your bank space`}
+        {name:`<:shovel:945324327555965008> Shovel - <:uc:922720730272137256> ${shovel} `,value:`Use for digging`},   
+        {name:`<:creditpoint:925956240209772564> Credit Points - <:uc:922720730272137256> 20`,value:`Use credit points to increase your bank space`}
         );
         embed.setFooter(`Requested by ${message.author.username}`,avatar);
+        embed.setColor('#00C6CB');
         embed.setTimestamp();
         const embed3 = new Discord.MessageEmbed();
         embed3.setTitle(`Items available to Shop!`);
         embed3.addFields(
         {name:`💍 Diamond Ring - <:uc:922720730272137256> ${diamond}`,value:`Perfect Gift for the crush of the Rich kids!`},
         {name:`🏆 Gold Trophy - <:uc:922720730272137256> ${trophy}`,value:`This is Gold trophy only the kids richer than rich kids can own this.`},
-        {name:`🔑 key - <:uc:922720730272137256> ${key}`,value:`This key is the key to the mansion`},
         {name:`🥇Gold Medal - <:uc:922720730272137256> ${gold}`,value:`This is gold medal only the rich kids can own this.`},
         {name:`🥈Silver Medal - <:uc:922720730272137256> ${silver}`,value:`This is the medal for the kids who are less rich than the rich kids`},
        );
         embed3.setFooter(`Requested by ${message.author.username}`,avatar);
+        embed3.setColor('#F7D979');
         embed3.setTimestamp();
         
         const embed2 = new Discord.MessageEmbed();
@@ -134,10 +134,10 @@ module.exports={
             {name:`🍏 Green Apple - <:uc:922720730272137256> ${apple}`,value:`Get this to increase your xp!`},
             {name:`:beer: Beer - <:uc:922720730272137256> ${beer}`,value:`Drink some beer to chill!`},
             {name:`:coffee: Coffee - <:uc:922720730272137256> ${coffee}`,value:`Caffeine will not let you sleep!`},
-            {name:`🧋 Bubble Tea - <:uc:922720730272137256> ${bubbletea}`,value:`drink to chill!`}
+            {name:`🧋 Bubble Tea - <:uc:922720730272137256> ${bubbletea}`,value:`Drink to chill!`}
 
         );
-        
+        embed2.setColor('#80D261');
         embed2.setFooter('More Coming Soon!');
 
         const embed4 = new Discord.MessageEmbed();
@@ -165,7 +165,8 @@ module.exports={
         {name:`<:vrglass:939429040245334036>VR glasses - <:uc:922720730272137256> ${vrglassesvalue}`,value:'vr glasses to get into metaverse'}
         
         );
-        embed5.setFooter(`Requested by ${message.author.username}`,avatar);;
+        embed5.setFooter(`Requested by ${message.author.username}`,avatar);
+        embed5.setColor(`#12355A`);
         embed5.setTimestamp();
         const row = new Discord.MessageActionRow().addComponents(
             new Discord.MessageSelectMenu()
@@ -175,12 +176,14 @@ module.exports={
               {
                 label:'Jewellery',
                 value:`jewellery${message.author.id}`,
-                description:'shows jewellery items'
+                description:'shows jewellery items',
+                emoji:'<:jewelry:945561334848823327>'
               },
               {
                label:'Food',
                value:`food${message.author.id}`,
-               description:'shows food items'
+               description:'shows food items',
+               emoji:'<:food:945561334689452064>'
              },
              {
                label:'Default',
@@ -190,12 +193,14 @@ module.exports={
              {
                label:'Limited Edition',
                value:`limitededition${message.author.id}`,
-               description:'Limited edition items which are available for only 1 week'
+               description:'Limited edition items which are available for only 1 week',
+               emoji:'<:limitededition:945561335092101141>'
              },
              {
               label:'Gadgets',
               value:`gadgets${message.author.id}`,
-              description:'Gadgets for doing stuff'
+              description:'Gadgets for doing stuff',
+              emoji:'<:gadgets:945561335020781668>'
              }
             ])
           )

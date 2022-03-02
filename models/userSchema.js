@@ -278,6 +278,7 @@ const userSchema = new mongoose.Schema({
     lootbox:{type:Number,require:true},
     collect:{type:String,require:true},
     lastplay:{type:Number,require:true},
+    shovel:{type:Number,require:true}
  
 
 });
