@@ -218,6 +218,11 @@ module.exports={
                                             embed2.setColor(`#30CC71`);
                                             embed2.setTimestamp();
                                             message.channel.send({embeds:[embed2]});
+                                            const update = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                              $inc:{
+                                                xp:50
+                                              }
+                                            });
                                           }
                                           if(item === 'Coffee'){
                                             const embed2 = new Discord.MessageEmbed();
@@ -228,16 +233,27 @@ module.exports={
                                             embed2.setColor(`#30CC71`);
                                             embed2.setTimestamp();
                                             message.channel.send({embeds:[embed2]});
+                                            const update = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                              $inc:{
+                                                xp:50
+                                              }
+                                            });
                                           }
                                           if(item === 'Green Apple'){
                                             const embed2 = new Discord.MessageEmbed();
                                             embed2.setTitle(`Ate ${item}!`);
                                             embed2.setDescription(`You ate whole ${emoji} ${item}!`);
-                                            embed2.addFields({name:`Rewards -`,value:`+ 1500 xp`});
+                                            embed2.addFields({name:`Rewards -`,value:`+ 750 xp`});
                                             embed2.setFooter(`Requested by ${message.author.username}`,avatar);
                                             embed2.setColor(`#30CC71`);
                                             embed2.setTimestamp();
                                             message.channel.send({embeds:[embed2]});
+
+                                            const update = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                              $inc:{
+                                                xp:750
+                                              }
+                                            });
                                           }
                                           if(item === 'Pizza Slice'){
                                             const embed2 = new Discord.MessageEmbed();
@@ -250,6 +266,12 @@ module.exports={
                                             embed2.setColor(`#30CC71`);
                                             embed2.setTimestamp();
                                             message.channel.send({embeds:[embed2]});
+
+                                            const update = await userModel.findOneAndUpdate({userID:message.author.id},{
+                                              $inc:{
+                                                xp:4500
+                                              }
+                                            });
                                           }
                                           if(item === 'Credit Points'){
                                             console.log('here 1');
