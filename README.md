@@ -27,6 +27,7 @@ These are all the commands present in the bot -
 * ```help``` command - shows all the commands bot has to offer.  
 
 ***for fun***:  
+  
   ```truth``` command - gives a truth to talk about.  
   ```dare``` command - gives a dare to perform.  
   ```topic``` command - gives a random topic to talk about.  
@@ -38,5 +39,6 @@ These are all the commands present in the bot -
   ```inspire-me``` command - shows a nice quote to motivate.  
 
 ***for currency game***:  
+  
   ```bal/balance @user``` command - shows your or the mentioned person's balance.  
   ```daily``` command - gives you your daily coins.
