@@ -1,4 +1,5 @@
-# ![utility bot avatar picture](https://cdn.discordapp.com/avatars/824626723878207499/1ad07c8a23c461ffbcea07542472d411.webp?size=160) Utility Bot  
+# ![utility bot avatar picture](https://cdn.discordapp.com/avatars/824626723878207499/1ad07c8a23c461ffbcea07542472d411.webp?size=160)   
+# Utility Bot  
 a multipurpose discord bot with over **100** features which served to thousands of users in over 100 + guilds  
 # Description  
 Utility bot can do moderation, has an inbuilt currency system, fun commands & meme and a lot more!  
