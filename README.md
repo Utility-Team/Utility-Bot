@@ -5,6 +5,6 @@ utility bot can do moderation, has an inbuilt currency system, fun commands & me
 ***for moderation***:  
   ```ban @user``` command - bans the mentioned user from the guild.  
   ```kick @user``` command - kicks the mentioned user from the guild.  
-  ```slowmode time``` command - sets the slowmode of the channel.
-  ```mute @user time``` command - mutes the mentioned user for specified time.
-  ```unban userid``` command - unbans the mentioned user id from the guild.  
+  ```slowmode time``` command - sets the slowmode of the channel.  
+  ```mute @user time``` command - mutes the mentioned user for specified time.  
+  ```unban userid``` command - unbans the mentioned user id from the guild.   
