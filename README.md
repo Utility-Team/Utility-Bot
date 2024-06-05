@@ -1,7 +1,8 @@
 # Utility Bot  
 a multipurpose discord bot with over **100** features  
 # Description  
-utility bot can do moderation, has an inbuilt currency system, fun commands & meme and a lot more! These are all the commands present in the bot -  
+utility bot can do moderation, has an inbuilt currency system, fun commands & meme and a lot more!  
+These are all the commands present in the bot -  
   
 ***for moderation***:  
   ```ban @user``` command - bans the mentioned user from the guild.  
