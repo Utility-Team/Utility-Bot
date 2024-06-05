@@ -11,7 +11,7 @@ These are all the commands present in the bot -
   ```mute @user time``` command - mutes the mentioned user for specified time.  
   ```unban userid``` command - unbans the mentioned user id from the guild.   
   ```unmute @user``` command - unmutes the mentioned user.  
-  ```warn @user reason``` command - warns the mentioned user for the specified reason.
+  ```warn @user reason``` command - warns the mentioned user for the specified reason.  
   ```warns @user``` command - shows the number of warns a user has.  
-  ```unwarn @user warn_number``` command - removes the mentioned warn.
+  ```unwarn @user warn_number``` command - removes the mentioned warn.  
   ```hackban userid``` command - bans the mentioned user id even before joining the guild.  
