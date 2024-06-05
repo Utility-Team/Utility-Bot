@@ -6,25 +6,25 @@ Utility bot can do moderation, has an inbuilt currency system, fun commands & me
 These are all the commands present in the bot -  
   
 ***for moderation***:  
-  ```ban @user``` command - bans the mentioned user from the guild.  
-  ```kick @user``` command - kicks the mentioned user from the guild.  
-  ```slowmode time``` command - sets the slowmode of the channel.  
-  ```mute @user time``` command - mutes the mentioned user for specified time.  
-  ```unban userid``` command - unbans the mentioned user id from the guild.   
-  ```unmute @user``` command - unmutes the mentioned user.  
-  ```warn @user reason``` command - warns the mentioned user for the specified reason.  
-  ```warns @user``` command - shows the number of warns a user has.  
-  ```unwarn @user warn_number``` command - removes the mentioned warn.  
-  ```hackban userid``` command - bans the mentioned user id even before joining the guild.  
-  ```clear number``` command - clears the number of messages.  
+* ```ban @user``` command - bans the mentioned user from the guild.
+* ```kick @user``` command - kicks the mentioned user from the guild.  
+* ```slowmode time``` command - sets the slowmode of the channel.  
+* ```mute @user time``` command - mutes the mentioned user for specified time.  
+* ```unban userid``` command - unbans the mentioned user id from the guild.   
+* ```unmute @user``` command - unmutes the mentioned user.  
+* ```warn @user reason``` command - warns the mentioned user for the specified reason.  
+* ```warns @user``` command - shows the number of warns a user has.  
+* ```unwarn @user warn_number``` command - removes the mentioned warn.  
+* ```hackban userid``` command - bans the mentioned user id even before joining the guild.  
+* ```clear number``` command - clears the number of messages.  
   
 ***for utility***:  
-  ```userinfo @user``` command - shows the info of the mentioned user in the form of embed.  
-  ```avatar @user``` command - shows the avatar of the mentioned user.  
-  ```serverinfo``` command - shows the info of the current guild.  
-  ```channeladd @user``` command - adds the mentioned person to the channel.  
-  ```channelremove @user``` command - removes the mentioned person from the channel.  
-  ```help``` command - shows all the commands bot has to offer.  
+* ```userinfo @user``` command - shows the info of the mentioned user in the form of embed.  
+* ```avatar @user``` command - shows the avatar of the mentioned user.  
+* ```serverinfo``` command - shows the info of the current guild.  
+* ```channeladd @user``` command - adds the mentioned person to the channel.  
+* ```channelremove @user``` command - removes the mentioned person from the channel.  
+* ```help``` command - shows all the commands bot has to offer.  
 
 ***for fun***:  
   ```truth``` command - gives a truth to talk about.  
