@@ -17,7 +17,7 @@ These are all the commands present in the bot -
   ```hackban userid``` command - bans the mentioned user id even before joining the guild.  
   ```clear number``` command - clears the number of messages.  
   
-***for utility***:
+***for utility***:  
   ```userinfo @user``` command - shows the info of the mentioned user in the form of embed.  
   ```avatar @user``` command - shows the avatar of the mentioned user.  
   ```serverinfo``` command - shows the info of the current guild.  
